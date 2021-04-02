@@ -19,3 +19,4 @@ git add nom_ficher
 git commit -m "<message : bref description>"
 git push
 
+git fetch origin Jiaqi_LIU:Jiaqi_LIU
