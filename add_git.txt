@@ -19,3 +19,8 @@ git add nom_ficher
 git commit -m "<message : bref description>"
 git push
 
+git fetch origin Jiaqi_LIU:Jiaqi_LIU
+git log --pretty=oneline --graph --all
+git log --graph --oneline
+git show
+connaître les modifications
