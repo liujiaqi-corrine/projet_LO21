@@ -1,0 +1,12 @@
+# depslib dependency file v1.0
+1619201912 source:c:\users\clément\desktop\bureau\utc\p21\lo21\projet\cellulut\cellulut.cpp
+	"Cellulut.h"
+
+1619374308 c:\users\clément\desktop\bureau\utc\p21\lo21\projet\cellulut\cellulut.h
+	<iostream>
+	<string>
+
+1619374301 source:c:\users\clément\desktop\bureau\utc\p21\lo21\projet\cellulut\main.cpp
+	<iostream>
+	"Cellulut.h"
+
