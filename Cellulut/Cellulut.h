@@ -5,7 +5,7 @@
 
 using namespace std;
 
-struct Etat{
+class Etat{
     int index;
     string label;
     string color;
@@ -57,7 +57,7 @@ public :
     ~Voisinage() = default;
 };
 
-struct Configuration{
+class Configuration{
     string name;
     Voisinage* voisinage;
     Etat* ensembleEtat = new Etat(8);
