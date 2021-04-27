@@ -5,84 +5,88 @@
 
 using namespace std;
 
-class Etat{
+class State{
     int index;
     string label;
     string color;
 public :
-    Etat() = default;
-    Etat(int X = 0, string Y = "", string Z = ""): index(X), label(Y), color(Z){};
-    ~Etat() = default;
+    State(string _label = "", string _color = "", int _index = 0): label(_label), color(_color), index(_index){};
+    ~State() = default;
+
+    inline int getIndex() const{return index;}
+    inline string getLabel() const{return label;}
+    inline string getColor() const{return color;}
 };
 
-class Cellule{
+class Cell{
     int x;
     int y;
-    Etat* etat;
+    State* state;
 public :
-    Cellule() = default;
-    ~Cellule() = default;
-    Cellule(int X, int Y): x(X), y(Y), etat(nullptr){};
+    Cell() = default;
+    ~Cell() = default;
+    Cell(int X, int Y): x(X), y(Y), state(nullptr){};
 
     inline int getX() const{return x;}
     inline int getY() const{return y;}
-    inline Etat* getEtat() const{return etat;}
+    inline State* getState() const{return state;}
 };
 
 class Grid{
     int length;
     int width;
-    Cellule** grid;
+    Cell** grid;
 public :
     Grid() = default;
     ~Grid() = default;
-    Grid(int X, int Y): length(X), width(Y), grid(nullptr){};
+    Grid(int _length, int _width): length(_length), width(_width), grid(nullptr){};
 
     inline int getLength() const{return length;}
     inline int getWidth() const{return width;}
 };
 
-class Regle{
+class Rule{
 public :
-    Regle() = default;
-    ~Regle() = default;
+    Rule() = default;
+    ~Rule() = default;
 };
 
 class Voisinage{
     string name;
-    int rayon;
-    Regle* regle;
+    int radius;
+    Rule* rule;
 public :
     Voisinage() = default;
     ~Voisinage() = default;
 };
 
-class Configuration{
+struct Model{
     string name;
+    State** groupState;
+    int nb_state;
     Voisinage* voisinage;
-    Etat* ensembleEtat = new Etat(8);
 public :
-    //Configuration() = default;
-    Configuration(string X ="", Voisinage* Y = nullptr){
-        Etat default_etat(0,"default","blanc");
-        ensembleEtat[0] = default_etat;
-    };
-    ~Configuration() = default;
+    Model();
+    ~Model() = default;
 
-    addEtat();
-    delEtat();
+    inline void addState(string label, string color){
+        State test(label,color,nb_state);
+        groupState[nb_state++] = &test;
+    };
+
+    void delState(int index);
 
 };
 
-class Bibliotheque{
-    Configuration** biblio;
+struct Library{
+    Model** library = new Model*;
 public :
-    Bibliotheque() = default;
-    ~Bibliotheque() = default;
+    Library() = default;
+    ~Library() = default;
 
-    getConfiguration();
-    addConfiguration();
-    delConfiguration();
+    Model getModel();
+    void addModel(Model X);
+    void delModel();
 };
 
 #endif // CELLULUT_H_INCLUDED
