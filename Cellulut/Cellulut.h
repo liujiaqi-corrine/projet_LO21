@@ -33,20 +33,26 @@ public :
     inline int getX() const{return x;}
     inline int getY() const{return y;}
     inline State* getState() const{return state;}
+
+    inline void setState(State* _state){state = _state;}
 };
 
 class Grid
 {
-    int length;
-    int width;
-    vector<Cell*> *grid;
+    unsigned int length;
+    unsigned int width;
+    Cell** listCells;
 public :
-    Grid() = default;
+    inline Grid(unsigned int _length = 0, unsigned int _width = 0) : length(_length), width(_width){};
     ~Grid() = default;
-    Grid(int _length, int _width): length(_length), width(_width), grid(nullptr){};
 
-    inline int getLength() const{return length;}
-    inline int getWidth() const{return width;}
+    inline unsigned int getLength() const{return length;}
+    inline unsigned int getWidth() const{return width;}
+    inline Cell** getlistCells() const{return listCells;}
+
+    inline void setlistCells(Cell** _listCells) {listCells = _listCells;}
+    inline void setLength(unsigned int _length) {length = _length;}
+    inline void setWidth(unsigned int _width) {width = _width;}
 };
 
 class Rule
@@ -70,7 +76,8 @@ class Model
 {
     string name;
     vector<State*>* listStates;
-    Voisinage* voisinage;
+    Grid* grid;
+    //Voisinage* voisinage;
 public :
     Model();
     ~Model() = default;
@@ -78,22 +85,29 @@ public :
     inline string getName() const{return name;}
     inline void setName(string _name){name = _name;}
     inline vector<State*>* getListStates() const{return listStates;}
+    inline Grid* getGrid() const{return grid;}
 
-    void addState(string label, string color);
-    void delState(int index);
+    void init_Grid(int width, int length);
+    void add_State(string label, string color);
+    void del_State(int index);
 
 };
 
 class Library
 {
+    static Library* singleton;  //Pointeur vers le singleton
+    Library() = default;  //Constructeur privé
     vector<Model*> *library;
 public :
-    Library() = default;
+    static Library* get() noexcept
+    {
+        return singleton;
+    }
     ~Library() = default;
 
     Model getModel();
-    void addModel(Model X);
-    void delModel();
+    void add_Model(Model X);
+    void del_Model();
 };
 
 #endif // CELLULUT_H_INCLUDED
