@@ -2,23 +2,26 @@
 #define FRACTION_H_INCLUDED
 #include<iostream>
 #include<string>
+#include<vector>
+
+#define MAX_STATE 8
 
 using namespace std;
 
-class State{
-    int index;
+class State
+{
     string label;
     string color;
 public :
-    State(string _label = "", string _color = "", int _index = 0): label(_label), color(_color), index(_index){};
+    State(string _label = "", string _color = ""): label(_label), color(_color){};
     ~State() = default;
 
-    inline int getIndex() const{return index;}
     inline string getLabel() const{return label;}
     inline string getColor() const{return color;}
 };
 
-class Cell{
+class Cell
+{
     int x;
     int y;
     State* state;
@@ -32,10 +35,11 @@ public :
     inline State* getState() const{return state;}
 };
 
-class Grid{
+class Grid
+{
     int length;
     int width;
-    Cell** grid;
+    vector<Cell*> *grid;
 public :
     Grid() = default;
     ~Grid() = default;
@@ -45,13 +49,15 @@ public :
     inline int getWidth() const{return width;}
 };
 
-class Rule{
+class Rule
+{
 public :
     Rule() = default;
     ~Rule() = default;
 };
 
-class Voisinage{
+class Voisinage
+{
     string name;
     int radius;
     Rule* rule;
@@ -60,26 +66,27 @@ public :
     ~Voisinage() = default;
 };
 
-struct Model{
+class Model
+{
     string name;
-    State** groupState;
-    int nb_state;
+    vector<State*>* listStates;
     Voisinage* voisinage;
 public :
     Model();
     ~Model() = default;
 
-    inline void addState(string label, string color){
-        State test(label,color,nb_state);
-        groupState[nb_state++] = &test;
-    };
+    inline string getName() const{return name;}
+    inline void setName(string _name){name = _name;}
+    inline vector<State*>* getListStates() const{return listStates;}
 
+    void addState(string label, string color);
     void delState(int index);
 
 };
 
-struct Library{
-    Model** library = new Model*;
+class Library
+{
+    vector<Model*> *library;
 public :
     Library() = default;
     ~Library() = default;

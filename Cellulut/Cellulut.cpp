@@ -1,10 +1,19 @@
 #include "Cellulut.h"
 
-Model::Model(){
+Model::Model()
+{
     name = "";
-    groupState = new State*[8];
-    nb_state = 0;
+    listStates = new vector<State*>;
     voisinage = nullptr;
     addState("defaut","blanc");
+}
+
+void Model::addState(string label, string color)
+{
+    if( listStates->size() < MAX_STATE)
+    {
+        State* newState = new State(label,color);
+        this->listStates->push_back(newState);
+    }
 }
 
