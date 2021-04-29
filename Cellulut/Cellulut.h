@@ -1,5 +1,6 @@
 #ifndef FRACTION_H_INCLUDED
 #define FRACTION_H_INCLUDED
+
 #include<iostream>
 #include<string>
 #include<vector>
@@ -10,104 +11,118 @@ using namespace std;
 
 class State
 {
-    string label;
-    string color;
-public :
-    State(string _label = "", string _color = ""): label(_label), color(_color){};
-    ~State() = default;
+    protected :
+        string label;
+        string color;
+        int index;
+    public :
+        State(string _label = "", string _color = "", int _index = 0);
+        ~State() = default;
 
-    inline string getLabel() const{return label;}
-    inline string getColor() const{return color;}
+        string getLabel() const;
+        string getColor() const;
 };
 
 class Cell
 {
-    int x;
-    int y;
-    State* state;
-public :
-    Cell() = default;
-    ~Cell() = default;
-    Cell(int X, int Y): x(X), y(Y), state(nullptr){};
+    protected :
+        int x;
+        int y;
+        State* state;
+    public :
+        Cell() = default;
+        ~Cell() = default;
+        Cell(int X, int Y): x(X), y(Y), state(nullptr){};
 
-    inline int getX() const{return x;}
-    inline int getY() const{return y;}
-    inline State* getState() const{return state;}
+        inline int getX() const{return x;}
+        inline int getY() const{return y;}
+        inline State* getState() const{return state;}
 
-    inline void setState(State* _state){state = _state;}
+        inline void setState(State* _state){state = _state;}
 };
 
 class Grid
 {
-    unsigned int length;
-    unsigned int width;
-    Cell** listCells;
-public :
-    inline Grid(unsigned int _length = 0, unsigned int _width = 0) : length(_length), width(_width){};
-    ~Grid() = default;
+    protected :
+        unsigned int length;
+        unsigned int width;
+        Cell** listCells;
+    public :
+        Grid(unsigned int _length = 0, unsigned int _width = 0);
+        ~Grid() = default;
 
-    inline unsigned int getLength() const{return length;}
-    inline unsigned int getWidth() const{return width;}
-    inline Cell** getlistCells() const{return listCells;}
+        unsigned int getLength() const;
+        unsigned int getWidth() const;
+        Cell** getlistCells() const;
 
-    inline void setlistCells(Cell** _listCells) {listCells = _listCells;}
-    inline void setLength(unsigned int _length) {length = _length;}
-    inline void setWidth(unsigned int _width) {width = _width;}
+        void setlistCells(Cell** _listCells);
+        void setLength(unsigned int _length);
+        void setWidth(unsigned int _width);
 };
 
 class Rule
 {
-public :
-    Rule() = default;
-    ~Rule() = default;
+    protected :
+    public :
+        Rule() = default;
+        ~Rule() = default;
 };
 
 class Voisinage
 {
-    string name;
-    int radius;
-    Rule* rule;
-public :
-    Voisinage() = default;
-    ~Voisinage() = default;
+    protected :
+        string name;
+        int radius;
+        Rule* rule;
+    public :
+        Voisinage() = default;
+        ~Voisinage() = default;
 };
 
 class Model
 {
-    string name;
-    vector<State*>* listStates;
-    Grid* grid;
-    //Voisinage* voisinage;
-public :
-    Model();
-    ~Model() = default;
+    protected :
+        string name;
+        vector<State*>* listStates;
+        Grid* grid;
+        //Voisinage* voisinage;
+    public :
+        Model(string _name = "");
+        ~Model() = default;
 
-    inline string getName() const{return name;}
-    inline void setName(string _name){name = _name;}
-    inline vector<State*>* getListStates() const{return listStates;}
-    inline Grid* getGrid() const{return grid;}
+        string getName() const;
+        vector<State*>* getListStates() const;
+        Grid* getGrid() const;
 
-    void init_Grid(int width, int length);
-    void add_State(string label, string color);
-    void del_State(int index);
+        void setName(string _name);
+
+        void init_Grid(int width, int length);
+        void add_State(State* new_state);
+        void del_State(int index);
+
+        friend class Library;
 
 };
 
 class Library
 {
-    static Library* singleton;  //Pointeur vers le singleton
-    Library() = default;  //Constructeur privé
-    vector<Model*> *library;
-public :
-    static Library* get() noexcept
-    {
-        return singleton;
-    }
-    ~Library() = default;
+    protected :
+        static Library *singleton;  //Pointeur vers le singleton
+        Library() = default;  //Constructeur privé
+        vector<Model*>* listModels = new vector<Model*>;
+    public :
+        static Library* getInstance() noexcept
+        {
+            return singleton;
+        }
+        ~Library() = default;
+        Library(const Library&) = delete;
+        Library& operator=(const Library&) = delete;
 
-    Model getModel();
-    void add_Model(Model X);
-    void del_Model();
+        vector<Model*>* getListModels();
+        Model* getModel();
+        void add_Model(Model* new_model);
+        void del_Model(Model* _model);
 };
 
 #endif // CELLULUT_H_INCLUDED
