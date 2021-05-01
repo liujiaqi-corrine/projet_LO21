@@ -15,11 +15,11 @@ void Library::add_Model(Model* new_model)
     {
         if(listModels->at(i) == new_model)
         {
-            cout<<"This model already exist \n"; //Gestion d'exception à faire
-            return;
+            throw invalid_argument("This model already exists \n");
         }
     }
     this->listModels->push_back(new_model);
+    cout<<"Model added"<<endl;
 }
 
 void Library::del_Model(Model* _model)
@@ -29,7 +29,7 @@ void Library::del_Model(Model* _model)
         if(listModels->at(i) == _model)
         {
             listModels->erase(listModels->begin()+i);
-            cout<<"Model deleted \n";
+            cout<<"Model deleted"<<endl;
             return;
         }
     }

@@ -21,6 +21,9 @@ class State
 
         string getLabel() const;
         string getColor() const;
+        int getIndex() const;
+
+        void setIndex(int _index);
 };
 
 class Cell
@@ -34,11 +37,13 @@ class Cell
         ~Cell() = default;
         Cell(int X, int Y): x(X), y(Y), state(nullptr){};
 
-        inline int getX() const{return x;}
-        inline int getY() const{return y;}
-        inline State* getState() const{return state;}
+        int getX() const;
+        int getY() const;
+        State* getState() const;
 
-        inline void setState(State* _state){state = _state;}
+        void setX(int _x);
+        void setY(int _y);
+        void setState(State* _state);
 };
 
 class Grid
@@ -98,10 +103,7 @@ class Model
 
         void init_Grid(int width, int length);
         void add_State(State* new_state);
-        void del_State(int index);
-
-        friend class Library;
-
+        void del_State(State* _state);
 };
 
 class Library
@@ -121,6 +123,7 @@ class Library
 
         vector<Model*>* getListModels();
         Model* getModel();
+
         void add_Model(Model* new_model);
         void del_Model(Model* _model);
 };

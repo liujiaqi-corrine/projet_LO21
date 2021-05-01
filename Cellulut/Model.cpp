@@ -20,6 +20,7 @@ Grid* Model::getGrid() const{return grid;}
 
 void Model::init_Grid(int width, int length)
 {
+
     grid->setWidth(width);
     grid->setLength(length);
     grid->setlistCells(new Cell*[width]);
@@ -31,6 +32,8 @@ void Model::init_Grid(int width, int length)
     {
         for (int j=0; j < length; j++)
         {
+            grid->getlistCells()[i][j].setX(i);
+            grid->getlistCells()[i][j].setY(j);
             grid->getlistCells()[i][j].setState(listStates->at(0));
         }
     }
@@ -38,18 +41,31 @@ void Model::init_Grid(int width, int length)
 
 void Model::add_State(State* new_state)
 {
-    if( listStates->size() < MAX_STATE)
+    if(listStates->size() >= MAX_STATE)
     {
-        this->listStates->push_back(new_state);
+        throw out_of_range("Maximum number of states reached");
     }
-    else
+    for (int i =0; i < listStates->size(); i++)
     {
-        cout<<"Maximum number of states reached"; //Gestion d'exception à faire
-        return;
+        if(listStates->at(i)->getIndex() == new_state->getIndex())
+        {
+            throw invalid_argument("State index already exists, index : " + to_string(new_state->getIndex()));
+        }
     }
+    this->listStates->push_back(new_state);
+    cout<<"State added \n";
 }
 
-void Model::del_State(int index)
+void Model::del_State(State* _state)
 {
-
+    for(int i = 0; i < listStates->size(); i++)
+    {
+        if(listStates->at(i) == _state)
+        {
+            listStates->erase(listStates->begin()+i);
+            cout<<"State deleted"<<endl;
+            return;
+        }
+    }
 }
+
