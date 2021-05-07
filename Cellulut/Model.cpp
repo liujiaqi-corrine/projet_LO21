@@ -1,22 +1,21 @@
-#include "Cellulut.h"
+#include "main.h"
 
 Model::Model(string _name)
 {
     name = _name;
     listStates = new vector<State*>;
     grid = new Grid();
-    //voisinage = nullptr;
     State* default_state = new State("default","white");
     add_State(default_state);
 }
 
 string Model::getName() const{return name;}
 
-void Model::setName(string _name){name = _name;}
-
 vector<State*>* Model::getListStates() const{return listStates;}
 
 Grid* Model::getGrid() const{return grid;}
+
+void Model::setName(string _name){name = _name;}
 
 void Model::init_Grid(int width, int length)
 {
@@ -37,6 +36,7 @@ void Model::init_Grid(int width, int length)
             grid->getlistCells()[i][j].setState(listStates->at(0));
         }
     }
+    return;
 }
 
 void Model::add_State(State* new_state)
@@ -53,7 +53,8 @@ void Model::add_State(State* new_state)
         }
     }
     this->listStates->push_back(new_state);
-    cout<<"State added \n";
+    cout<<"State added"<<endl;
+    return;
 }
 
 void Model::del_State(State* _state)

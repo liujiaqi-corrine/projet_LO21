@@ -1,4 +1,4 @@
-#include "Cellulut.h"
+#include "main.h"
 
 int Cell::getX() const{return x;}
 

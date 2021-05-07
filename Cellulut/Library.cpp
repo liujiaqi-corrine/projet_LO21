@@ -1,13 +1,8 @@
-#include "Cellulut.h"
+#include "main.h"
 
 Library* Library::singleton = new Library;
 
 vector<Model*>* Library::getListModels(){return listModels;}
-
-Model* Library::getModel()
-{
-
-}
 
 void Library::add_Model(Model* new_model)
 {
@@ -20,6 +15,7 @@ void Library::add_Model(Model* new_model)
     }
     this->listModels->push_back(new_model);
     cout<<"Model added"<<endl;
+    return;
 }
 
 void Library::del_Model(Model* _model)
