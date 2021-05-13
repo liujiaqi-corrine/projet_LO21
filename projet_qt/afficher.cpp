@@ -1,10 +1,10 @@
 #include "afficher.h"
+#include "Grid.h"
 using namespace std;
 
 //couleur possible (string) : 0 blanc, 1 noir, 2 vert, 3 rouge, 4 jaune, 5 orange
 
-void afficher_1_etat (int argc, char *argv[],Grid g){
-    QApplication app(argc, argv);
+void Grid::afficher_1_etat (Grid g){
     QWidget fenetre;
     fenetre.setFixedSize(g.getWidth()*20,g.getLength()*20);
 
@@ -62,8 +62,8 @@ void afficher_1_etat (int argc, char *argv[],Grid g){
     QObject::connect(tableWidget,SIGNAL(doubleClicked(const QModelIndex&)),&app,SLOT(cellActivation(const QModelIndex)));
     fenetre.setLayout(couche);
 }
-
-void cellActivation(QTableWidget* tableWidget){
+/*
+void cellActivation(QTableWidget* tableWidget,Grid g){
     for(unsigned int i=0;i<g.getLength();i++){
         for(unsigned int j=0;j<g.getWidth();j++){
             state=(g.getlistCells()[i][j].getState());
@@ -105,3 +105,4 @@ void cellActivation(QTableWidget* tableWidget){
     }
 
 }
+*/
