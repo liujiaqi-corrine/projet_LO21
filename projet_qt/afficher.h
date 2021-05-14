@@ -22,7 +22,7 @@
 #include <QFormLayout>
 #include <QTableWidget>
 #include <QVBoxLayout>
-
+#include <QHeaderView>
 
 
 

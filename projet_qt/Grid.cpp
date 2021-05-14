@@ -66,13 +66,6 @@ Grid::Grid(QWidget* parent):QWidget(parent){
 
 
 
-
-
-
-
-
-
-
 unsigned int Grid::getLength() const{return length;}
 
 unsigned int Grid::getWidth() const{return width;}
