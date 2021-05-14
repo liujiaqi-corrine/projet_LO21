@@ -1,4 +1,14 @@
-#include "main.h"
+#include "Cell.h"
+
+Cell::Cell(int type) : QTableWidgetItem(type) {
+
+    //this->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+    this->setFlags(Qt::ItemIsEnabled);
+    this->setText("o");
+
+
+}
+
 
 int Cell::getX() const{return x;}
 
