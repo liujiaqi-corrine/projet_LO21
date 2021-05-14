@@ -1,10 +1,10 @@
-#include "main.h"
+#include "State.h"
 
-State::State(string _label, string _color, int _index): label(_label), color(_color), index(_index){}
+State::State(QString _label, QString _color, int _index): label(_label), color(_color), index(_index){}
 
-string State::getLabel() const{return label;}
+QString State::getLabel() const{return label;}
 
-string State::getColor() const{return color;}
+QString State::getColor() const{return color;}
 
 int State::getIndex() const{return index;}
 
