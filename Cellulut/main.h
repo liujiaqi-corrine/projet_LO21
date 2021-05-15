@@ -7,14 +7,16 @@
 
 #define MAX_STATE 8
 
-using namespace std;
+//using namespace std;
 
 #include "State.h"
 #include "Cell.h"
 #include "Grid.h"
 #include "Surrounding.h"
-#include "Rule.h"
+//#include "Rule.h"
 #include "Model.h"
-#include "Library.h"
+//#include "Library.h"
+
+#include <QTableWidgetItem>
 
 #endif // MAIN_H_INCLUDED

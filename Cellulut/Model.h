@@ -1,25 +1,32 @@
 #ifndef MODEL_H_INCLUDED
 #define MODEL_H_INCLUDED
 
+#include <QString>
+//#include "Grid.h"
+#include "State.h"
+
 class Model
 {
     protected :
-        string name;
-        vector<State*>* listStates;
-        Grid* grid;
+        QString name;
+        State** listStates;
+        int nbState;
+        //Grid* grid;
     public :
-        Model(string _name = "");
+        Model(QString _name, int _nbState);
+        Model();
         ~Model() = default;
 
-        string getName() const;
-        vector<State*>* getListStates() const;
-        Grid* getGrid() const;
+        QString getName() const;
+        State** getListStates() const;
+        //Grid* getGrid() const;
+        int getNbState() const;
 
-        void setName(string _name);
+        void setName(QString _name);
 
-        void init_Grid(int width, int length);
-        void add_State(State* new_state);
-        void del_State(State* _state);
+        //void init_Grid(int width, int length);
+        //void add_State(State* new_state);
+        //void del_State(State* _state);
 };
 
 #endif // MODEL_H_INCLUDED

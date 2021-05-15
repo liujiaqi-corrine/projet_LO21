@@ -1,10 +1,17 @@
 #include "State.h"
 
-State::State(QString _label, QString _color, int _index): label(_label), color(_color), index(_index){}
+State::State(int _index, QColor _color, QString _label){
+
+    index = _index;
+    label = _label;
+    color = _color;
+    //color = QColor(Qt::blue);
+
+}
 
 QString State::getLabel() const{return label;}
 
-QString State::getColor() const{return color;}
+QColor State::getColor() const{return color;}
 
 int State::getIndex() const{return index;}
 

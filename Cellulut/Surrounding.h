@@ -1,6 +1,8 @@
 #ifndef SURROUNDING_H_INCLUDED
 #define SURROUNDING_H_INCLUDED
 
+
+
 class Surrounding
 {
     protected :
@@ -8,5 +10,6 @@ class Surrounding
         Surrounding() = default;
         ~Surrounding() = default;
 };
+
 
 #endif // SURROUNDING_H_INCLUDED

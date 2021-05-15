@@ -2,8 +2,9 @@
 #define GRID_H_INCLUDED
 
 #include "Cell.h"
-#include <QtWidgets>
+#include "Model.h"
 #include <QTableWidget>
+#include <QtWidgets>
 
 class Grid : public QTableWidget
 {
@@ -11,6 +12,7 @@ class Grid : public QTableWidget
         unsigned int length;
         unsigned int width;
         Cell** listCells;
+        Model* model;
     public :
         Grid(unsigned int _length = 0, unsigned int _width = 0);
         Grid(QWidget *parent) : QTableWidget(parent) {}
@@ -21,15 +23,15 @@ class Grid : public QTableWidget
         unsigned int getWidth() const;
         Cell** getlistCells() const;
 
+        void setModele(Model* _modele);
+
         void setlistCells(Cell** _listCells);
         void setLength(unsigned int _length);
         void setWidth(unsigned int _width);
 
-    signals:
-        void clicked();
-
     public slots:
-        void faire(int columns, int rows);
+        void changeState(int columns, int rows);
+        //void deblockCells();
 };
 
 #endif // GRID_H_INCLUDED

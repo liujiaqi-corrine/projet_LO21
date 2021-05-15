@@ -1,8 +1,9 @@
 #ifndef CELL_H_INCLUDED
 #define CELL_H_INCLUDED
 
-#include "State.h"
-#include <QTableWidgetItem>
+#include <main.h>
+//#include "State.h"
+//#include <QTableWidgetItem>
 
 class Cell : public QTableWidgetItem
 {
@@ -12,7 +13,7 @@ class Cell : public QTableWidgetItem
         State* state;
     public :
 
-        Cell(int type = Type) ;
+        Cell(int _x, int _y, int type = Type);
         ~Cell() = default;
 
         int getX() const;
@@ -23,8 +24,6 @@ class Cell : public QTableWidgetItem
         void setY(int _y);
         void setState(State* _state);
 
-    signals:
-        void clicked();
 
 };
 

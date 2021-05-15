@@ -1,11 +1,18 @@
-#include "Cell.h"
+//#include "Cell.h"
+#include "main.h"
 
-Cell::Cell(int type) : QTableWidgetItem(type) {
+Cell::Cell(int _x, int _y, int type) : QTableWidgetItem(type) {
 
+    x= _x;
+    y= _y;
     //this->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-    this->setFlags(Qt::ItemIsEnabled);
+    //this->setFlags(Qt::ItemIsEnabled);
+    this->setFlags(Qt::NoItemFlags);
     this->setText("o");
 
+    state = new State(0, QColor(Qt::green));  // Remettre en blanc plus tard
+
+    this->setBackground(QBrush(state->getColor()));
 
 }
 
