@@ -18,3 +18,9 @@ void Surrounding::setInteractable(int row, int colomn){
     interactable[diametre*row+colomn]=true;
 
 }
+
+void Surrounding::setNotInteractable(int row, int colomn){
+
+    interactable[diametre*row+colomn]=false;
+
+}

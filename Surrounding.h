@@ -17,6 +17,7 @@ class Surrounding : public QObject
         //~Surrounding(); // error :undefined reference to vtable for
         bool* getInteractable() const {return interactable;}
         void setInteractable(int i, int j);
+        void setNotInteractable(int row, int colomn);
         int getDiametre() const {return diametre;}
 };
 

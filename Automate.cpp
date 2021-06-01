@@ -7,24 +7,75 @@ Automate::Automate() : QWidget()
 
     added = 0;
 
-    b_modele = new QPushButton("Modele",this);
+    b_library = new QPushButton("Bibliothèque",this);
     b_voisinage = new QPushButton("Afficher Voisinage",this);
 
+    lib = new Library;
     grille = new Grid(10,10,this);
 
     QVBoxLayout *principal = new QVBoxLayout;
-        principal->addWidget(b_modele);
+        principal->addWidget(b_library);
         principal->addWidget(b_voisinage);
         principal->addWidget(grille);
 
     setLayout(principal);
 
-    QObject::connect(b_modele,&QPushButton::clicked,this,&Automate::defineModel);
+    QObject::connect(b_library,&QPushButton::clicked,this,&Automate::chooseModel);
     QObject::connect(b_voisinage,&QPushButton::clicked,this,&Automate::displaySurrounding);
 
 }
 
+void Automate::chooseModel(){
+
+
+    //QLCDNumber* nombre = new QLCDNumber(lib->getListModels().size()) ;
+    QLCDNumber* nombre = new QLCDNumber ;
+    nombre->display((int) lib->getListModels().size());
+
+    list = new QComboBox;
+    for (unsigned long long i=0;i<lib->getListModels().size();i++) list->addItem(lib->getListModels()[i]->getName());
+
+
+    QPushButton *annuler = new QPushButton("Annuler");
+    QPushButton *valider = new QPushButton("Valider");
+    QPushButton *creer = new QPushButton("Créer");
+
+    QHBoxLayout *boutons = new QHBoxLayout;
+        boutons->addWidget(annuler);
+        boutons->addWidget(valider);
+
+    QFormLayout *form = new QFormLayout;
+        form->addRow("Nombre de modele:", nombre);
+        form->addRow("Choix du Modele:", list);
+        form->addRow("Ajout d'un modele:", creer);
+
+    QVBoxLayout *vertical = new QVBoxLayout;
+        vertical->addLayout(form);
+        vertical->addLayout(boutons);
+
+    infos = new QDialog(this);
+        infos->setWindowTitle("Choix d'un Modele");
+        infos->setModal(true);
+        infos->setLayout(vertical);
+        infos->show();
+
+    QObject::connect(valider,&QPushButton::clicked,this,&Automate::selectModel);
+    QObject::connect(valider,&QPushButton::clicked,infos,&QDialog::close);
+    QObject::connect(creer,&QPushButton::clicked,this,&Automate::defineModel);
+    QObject::connect(creer,&QPushButton::clicked,infos,&QDialog::close);
+    QObject::connect(annuler,&QPushButton::clicked,infos,&QDialog::close);
+
+}
+
+void Automate::selectModel(){
+
+    lib->setCurrentModel(list->currentIndex());
+    model=lib->getCurrentModel();
+
+}
+
 void Automate::defineModel(){
+
 
     nom = new QLineEdit;
     nb = new QSpinBox;
@@ -53,6 +104,7 @@ void Automate::defineModel(){
         infos->show();
 
     QObject::connect(suivant,&QPushButton::clicked,this,&Automate::defineStates);
+    QObject::connect(suivant,&QPushButton::clicked,infos,&QDialog::close);
     QObject::connect(annuler,&QPushButton::clicked,infos,&QDialog::close);
 
 }
@@ -60,11 +112,10 @@ void Automate::defineModel(){
 
 void Automate::defineStates(){
 
-    infos->close();
-
     //Creation du Modele selon les infos récupérés dans defineState
     if(added==0) {
         model = new Model(nom->text(),nb->value());
+        lib->addModel(model);
         grille->setModele(model);
     }
 
@@ -100,6 +151,7 @@ void Automate::defineStates(){
         infos->show();
 
     QObject::connect(suivant,&QPushButton::clicked,this,&Automate::defineStates);
+    QObject::connect(suivant,&QPushButton::clicked,infos,&QDialog::close);
     //QObject::connect(suivant,&QPushButton::clicked,grille,&Grid::deblockCells);*
     QObject::connect(color,&QPushButton::clicked,this,&Automate::defineColor);
 
@@ -183,7 +235,8 @@ void Automate::drawSurrounding(){
 
    QObject::connect(valider,&QPushButton::clicked,infos,&QDialog::close);
    QObject::connect(voisins,&Grid::cellClicked,model->getVoisinage(),&Surrounding::setInteractable);
-   QObject::connect(voisins,&Grid::cellClicked,this,&Automate::displaySurrounding);
+   //QObject::connect(voisins,&Grid::cellClicked,this,&Automate::displaySurrounding);
+   QObject::connect(valider,&QPushButton::clicked,this,&Automate::chooseModel);
 
 }
 

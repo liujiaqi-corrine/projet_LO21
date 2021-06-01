@@ -7,6 +7,7 @@
 #include <QDialog>
 #include "Grid.h"
 #include "Model.h"
+#include "Library.h"
 
 class Automate : public QWidget
 {
@@ -14,10 +15,11 @@ class Automate : public QWidget
     Automate();
 
     private:
-    QPushButton *b_modele;
+    QPushButton *b_library;
     QPushButton *b_voisinage;
     Grid* grille;
     Model* model;
+    Library* lib;
 
     //Dialogue Modele
     QDialog* infos;
@@ -27,6 +29,7 @@ class Automate : public QWidget
     QPushButton *color;
     QColor* couleur;
     QLineEdit *label;
+    QComboBox *list;
 
 
     public slots :
@@ -36,6 +39,8 @@ class Automate : public QWidget
         void defineSurrounding();
         void drawSurrounding();
         void displaySurrounding();
+        void chooseModel();
+        void selectModel();
 };
 
 

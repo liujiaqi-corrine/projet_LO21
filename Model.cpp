@@ -7,12 +7,6 @@ Model::Model(QString _name, int _nbState)
 
     listStates= new State*[nbState];
     voisinage= nullptr;
-
-    //listStates[0] = new State(0, QColor(Qt::blue));
-    //listStates[1] = new State(1, QColor(Qt::red));
-
-    //grid = new Grid();
-
 }
 
 Model::Model(){
