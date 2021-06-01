@@ -1,5 +1,5 @@
-//#include "Cell.h"
-#include "main.h"
+#include "Cell.h"
+
 
 Cell::Cell(int _x, int _y, int type) : QTableWidgetItem(type) {
 
@@ -10,9 +10,12 @@ Cell::Cell(int _x, int _y, int type) : QTableWidgetItem(type) {
     this->setFlags(Qt::NoItemFlags);
     this->setText("o");
 
-    state = new State(0, QColor(Qt::green));  // Remettre en blanc plus tard
+    state = nullptr;
 
-    this->setBackground(QBrush(state->getColor()));
+
+    //state = new State(0, QColor(Qt::white));  // Remettre en blanc plus tard
+
+    //this->setBackground(QBrush(state->getColor()));
 
 }
 
@@ -27,4 +30,4 @@ void Cell::setX(int _x){x = _x;}
 
 void Cell::setY(int _y){y = _y;}
 
-void Cell::setState(State* _state){state = _state;}
+void Cell::setState(State* _state){state = _state; this->setText(state->getLabel()[0]);}

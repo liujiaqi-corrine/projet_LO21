@@ -4,12 +4,14 @@
 #include <QString>
 //#include "Grid.h"
 #include "State.h"
+#include "Surrounding.h"
 
 class Model
 {
     protected :
         QString name;
         State** listStates;
+        Surrounding* voisinage;
         int nbState;
         //Grid* grid;
     public :
@@ -21,6 +23,8 @@ class Model
         State** getListStates() const;
         //Grid* getGrid() const;
         int getNbState() const;
+        void setVoisinage(int _diametre) {voisinage = new Surrounding(_diametre);}
+        Surrounding* getVoisinage() const {return voisinage;}
 
         void setName(QString _name);
 

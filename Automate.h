@@ -35,6 +35,7 @@ class Automate : public QWidget
         void defineColor();
         void defineSurrounding();
         void drawSurrounding();
+        void displaySurrounding();
 };
 
 

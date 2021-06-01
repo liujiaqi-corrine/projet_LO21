@@ -6,6 +6,7 @@ Model::Model(QString _name, int _nbState)
     nbState = _nbState;
 
     listStates= new State*[nbState];
+    voisinage= nullptr;
 
     //listStates[0] = new State(0, QColor(Qt::blue));
     //listStates[1] = new State(1, QColor(Qt::red));
@@ -20,9 +21,10 @@ Model::Model(){
     nbState=2;
 
     listStates= new State*[nbState];
+    voisinage = nullptr;
 
-    listStates[0]= new State(0, QColor(Qt::blue));
-    listStates[1] = new State(1, QColor(Qt::white));
+    listStates[0]= new State(0, QColor(Qt::white));
+    listStates[1] = new State(1, QColor(Qt::black));
 
 }
 

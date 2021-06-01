@@ -1,21 +1,14 @@
 #include "Automate.h"
 
-/*#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QFormLayout>
-#include <QLineEdit>
-#include <QSpinBox>*/
-
-
 Automate::Automate() : QWidget()
 {
     setMinimumSize(600,600);
-    setWindowTitle("Automate à l'envers");
+    setWindowTitle("Automate en Y");
 
     added = 0;
 
     b_modele = new QPushButton("Modele",this);
-    b_voisinage = new QPushButton("Voisinage",this);
+    b_voisinage = new QPushButton("Afficher Voisinage",this);
 
     grille = new Grid(10,10,this);
 
@@ -27,73 +20,7 @@ Automate::Automate() : QWidget()
     setLayout(principal);
 
     QObject::connect(b_modele,&QPushButton::clicked,this,&Automate::defineModel);
-    QObject::connect(b_voisinage,&QPushButton::clicked,this,&Automate::defineSurrounding);
-
-}
-
-
-void Automate::defineSurrounding(){
-
-    nom = new QLineEdit;
-    nb = new QSpinBox;
-        nb->setMaximum(3);
-        nb->setMinimum(1);
-
-    QPushButton *annuler = new QPushButton("Annuler");
-    QPushButton *suivant = new QPushButton("Suivant");
-
-    QHBoxLayout *boutons = new QHBoxLayout;
-        boutons->addWidget(annuler);
-        boutons->addWidget(suivant);
-
-    QFormLayout *form = new QFormLayout;
-      form->addRow("Nom:", nom);
-      form->addRow("Rayon :", nb);
-
-   QVBoxLayout *vertical = new QVBoxLayout;
-      vertical->addLayout(form);
-      vertical->addLayout(boutons);
-
-   infos = new QDialog(this);
-       infos->setWindowTitle("Ajout d'un Voisinage");
-       infos->setModal(true);
-       infos->setLayout(vertical);
-       infos->show();
-
-   QObject::connect(suivant,&QPushButton::clicked,this,&Automate::drawSurrounding);
-   QObject::connect(annuler,&QPushButton::clicked,infos,&QDialog::close);
-
-}
-
-void Automate::drawSurrounding(){
-
-    infos->close();
-
-    QTextEdit texte;
-    texte.setText("Definissez le voisinage pour la cellule noire :");
-
-
-    QPushButton *valider = new QPushButton("Valider");
-
-    Grid* voisins = new Grid(2*nb->value()+1,2*nb->value()+1,this);
-    voisins->setModele(new Model());
-    voisins->item(nb->value()/2+1, nb->value()/2+1)->setBackground(QBrush(QColor(Qt::black)));
-    voisins->item(nb->value()/2+1, nb->value()/2+1)->setFlags(Qt::NoItemFlags);
-
-    QHBoxLayout *boutons = new QHBoxLayout;
-        boutons->addWidget(valider);
-
-   QVBoxLayout *vertical = new QVBoxLayout;
-      vertical->addWidget(voisins);
-      vertical->addLayout(boutons);
-
-   infos = new QDialog(this);
-       infos->setWindowTitle("Ajout d'un Voisinage");
-       infos->setModal(true);
-       infos->setLayout(vertical);
-       infos->show();
-
-   QObject::connect(valider,&QPushButton::clicked,infos,&QDialog::close);
+    QObject::connect(b_voisinage,&QPushButton::clicked,this,&Automate::displaySurrounding);
 
 }
 
@@ -135,14 +62,20 @@ void Automate::defineStates(){
 
     infos->close();
 
+    //Creation du Modele selon les infos récupérés dans defineState
     if(added==0) {
         model = new Model(nom->text(),nb->value());
         grille->setModele(model);
     }
 
+    //Ajout de l'Etat récupérés dans l'appel à defineStates précedent
     if(added>0) model->getListStates()[added-1] = new State(added-1,*couleur,label->text());
 
-    if (added==nb->value()) return;
+    if (added==nb->value()) {
+        this->defineSurrounding();
+        return;
+    }
+
 
     added++;
 
@@ -171,6 +104,8 @@ void Automate::defineStates(){
     QObject::connect(color,&QPushButton::clicked,this,&Automate::defineColor);
 
 
+
+
 }
 
 void Automate::defineColor(){
@@ -183,3 +118,103 @@ void Automate::defineColor(){
     color->setPalette(palette);
 
 }
+
+
+void Automate::defineSurrounding(){
+
+    //added=0; pour pouvoir recreer un modele
+    nom = new QLineEdit;
+    nb = new QSpinBox;
+        nb->setMaximum(5);
+        nb->setMinimum(3);
+
+    QPushButton *annuler = new QPushButton("Annuler");
+    QPushButton *suivant = new QPushButton("Suivant");
+
+    QHBoxLayout *boutons = new QHBoxLayout;
+        boutons->addWidget(annuler);
+        boutons->addWidget(suivant);
+
+    QFormLayout *form = new QFormLayout;
+      form->addRow("Nom:", nom);
+      form->addRow("Rayon :", nb);
+
+   QVBoxLayout *vertical = new QVBoxLayout;
+      vertical->addLayout(form);
+      vertical->addLayout(boutons);
+
+   infos = new QDialog(this);
+       infos->setWindowTitle("Définition du Voisinage");
+       infos->setModal(true);
+       infos->setLayout(vertical);
+       infos->show();
+
+   QObject::connect(suivant,&QPushButton::clicked,this,&Automate::drawSurrounding);
+   QObject::connect(suivant,&QPushButton::clicked,infos,&QDialog::close);
+   QObject::connect(annuler,&QPushButton::clicked,infos,&QDialog::close);
+
+}
+
+void Automate::drawSurrounding(){
+
+
+    model->setVoisinage(nb->value()*2-1);
+
+    QGroupBox* texte = new QGroupBox("Definissez le voisinage de la cellule centrale :");
+    QPushButton *valider = new QPushButton("Valider");
+
+    Grid* voisins = new Grid(model->getVoisinage()->getDiametre(),model->getVoisinage()->getDiametre(),texte);
+    voisins->setModele(new Model());
+    //voisins->item(nb->value()/2+1, nb->value()/2+1)->setBackground(QBrush(QColor(Qt::black)));
+
+    QHBoxLayout *boutons = new QHBoxLayout;
+        boutons->addWidget(valider);
+
+   QVBoxLayout *vertical = new QVBoxLayout;
+      vertical->addWidget(texte);
+      vertical->addWidget(voisins);
+      vertical->addLayout(boutons);
+
+   infos = new QDialog(this);
+       infos->setWindowTitle("Définition du Voisinage");
+       infos->setModal(true);
+       infos->setLayout(vertical);
+       infos->show();
+
+   QObject::connect(valider,&QPushButton::clicked,infos,&QDialog::close);
+   QObject::connect(voisins,&Grid::cellClicked,model->getVoisinage(),&Surrounding::setInteractable);
+   QObject::connect(voisins,&Grid::cellClicked,this,&Automate::displaySurrounding);
+
+}
+
+void Automate::displaySurrounding(){
+
+    QPushButton *terminer = new QPushButton("Terminer");
+
+    Grid* voisins = new Grid(grille->getModel()->getVoisinage()->getDiametre(),grille->getModel()->getVoisinage()->getDiametre(),this);
+    voisins->setModele(new Model());
+    for (int i=0; i<voisins->rowCount(); i++){
+        for (int j=0; j<voisins->columnCount(); j++){
+            if (grille->getModel()->getVoisinage()->getInteractable()[voisins->rowCount()*i+j] == true )
+                voisins->getlistCells()[i][j]->setBackground(QBrush(QColor(Qt::black)));
+        }
+    }
+
+    QHBoxLayout *boutons = new QHBoxLayout;
+        boutons->addWidget(terminer);
+
+   QVBoxLayout *vertical = new QVBoxLayout;
+      vertical->addWidget(voisins);
+      vertical->addLayout(boutons);
+
+   infos = new QDialog(this);
+       infos->setWindowTitle("Affichage du Voisinage");
+       infos->setModal(true);
+       infos->setLayout(vertical);
+       infos->show();
+
+   QObject::connect(terminer,&QPushButton::clicked,infos,&QDialog::close);
+
+}
+
+
