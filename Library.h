@@ -16,7 +16,7 @@ class Library
     public :
         Library();
         std::vector<Model*> getListModels() const {return listModels;}
-        void addModel(Model* _model) {listModels.push_back(_model);}
+        void addModel(QString nom, int nb);
         Model* getCurrentModel() {return currentModel;}
         void setCurrentModel(int indice) {currentModel = listModels[indice];}
 

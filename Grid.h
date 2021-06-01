@@ -3,8 +3,11 @@
 
 #include "Cell.h"
 #include "Model.h"
+#include "Automate.h"
 #include <QTableWidget>
 #include <QtWidgets>
+
+class Automate; //forward declaration
 
 class Grid : public QTableWidget
 {
@@ -12,19 +15,27 @@ class Grid : public QTableWidget
         //int length;
         //int width;
         Cell*** listCells;
-        Model* model;
+        Automate* parent;
+        Model* modelBase;
     public :
         //Grid(unsigned int _length = 0, unsigned int _width = 0);
         Grid(QWidget *parent) : QTableWidget(parent) {}
         Grid(int rows, int columns, QWidget *parent);
+        Grid(int size, QWidget *parent);
         ~Grid() = default;
+
+
+        //virtual class Automate* parent() {return this->parent()->parent();}
 
         int getLength() const;
         int getWidth() const;
         Cell*** getlistCells() const;
-        Model* getModel() const {return model;}
+        Automate* getParent() const {return parent;}
+        //Model* getModel() const {return model;}
 
-        void setModele(Model* _modele);
+        void resetGrid();
+
+        //void setModele(Model* _modele);
 
         void setlistCells(Cell*** _listCells);
         void setLength(unsigned int _length);
@@ -32,6 +43,7 @@ class Grid : public QTableWidget
 
     public slots:
         void changeState(int row, int rows);
+        void changeStateSurrounding(int row, int column);
         //void deblockCells();
 };
 

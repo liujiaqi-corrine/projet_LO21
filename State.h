@@ -11,7 +11,7 @@ class State
         QString label;
         QColor color;
     public :
-        State(int _index, QColor _color, QString _label="" );
+        State(int _index, QColor _color, QString _label=" " );
         ~State() = default;
 
         QString getLabel() const;

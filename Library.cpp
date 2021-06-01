@@ -4,9 +4,18 @@
 Library::Library(){
 
 
-    //Creation Modele Game Life
-    listModels.push_back(createBrianSBrain());
+    //Creation Modele de base
     listModels.push_back(createLifeGame());
+    listModels.push_back(createBrianSBrain());
+
+    currentModel=listModels[1];
+
+}
+
+void Library::addModel(QString nom, int nb){
+
+    listModels.push_back(new Model(nom,nb));
+    //return listModels[listModels.size()-1]; //Renvoi du dernier Modele ajouté
 
 }
 
@@ -35,9 +44,9 @@ Model* Library::createBrianSBrain(){
     Model* briansbrain = new Model("Brian's Brain", 3);
 
     //Ajout des Etats
-    briansbrain->getListStates()[0] = new State(0,QColor(Qt::green),"repos");
+    briansbrain->getListStates()[0] = new State(0,QColor(Qt::green),"Zepos");
     briansbrain->getListStates()[1] = new State(1,QColor(Qt::red),"excité");
-    briansbrain->getListStates()[2] = new State(1,QColor(Qt::yellow),"réfractaire");
+    briansbrain->getListStates()[2] = new State(2,QColor(Qt::yellow),"réfractaire");
 
     //Definition du voisinage
     briansbrain->setVoisinage(3);

@@ -19,6 +19,10 @@ class Surrounding : public QObject
         void setInteractable(int i, int j);
         void setNotInteractable(int row, int colomn);
         int getDiametre() const {return diametre;}
+
+
+        //Surcharge opérateur =  pour le calcul des regles ou surcharge de la classe grille
+        //Stratégie fonction d'évolution : comparer les voisinages avec les regles et voir si une correspond, si oui on applique la regle
 };
 
 

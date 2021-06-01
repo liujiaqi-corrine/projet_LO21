@@ -2,37 +2,43 @@
 #define AUTOMATE_H
 
 #include <QApplication>
-#include <QWidget>
+#include <QtWidgets>
 #include <QPushButton>
 #include <QDialog>
+#include <QSpinBox>
 #include "Grid.h"
 #include "Model.h"
 #include "Library.h"
+
+class Grid; //forward declaration
 
 class Automate : public QWidget
 {
     public:
     Automate();
+        //virtual Automate* parent() {return this;}
+        Library* getLib() const {return lib;}
 
     private:
-    QPushButton *b_library;
-    QPushButton *b_voisinage;
-    Grid* grille;
-    Model* model;
-    Library* lib;
+        QPushButton *b_library;
+        QPushButton *b_voisinage;
+        Grid* grille;
+        //Model* model;
+        Library* lib;
+        void drawInterface();
 
-    //Dialogue Modele
-    QDialog* infos;
-    QLineEdit *nom;
-    QSpinBox *nb;
-    int added;
-    QPushButton *color;
-    QColor* couleur;
-    QLineEdit *label;
-    QComboBox *list;
+    //Boite de Dialogue
+        QDialog* infos;
+        QLineEdit *nom;
+        QSpinBox *nb;
+        int added;
+        QPushButton *color;
+        QColor* couleur;
+        QLineEdit *label;
+        QComboBox *list;
 
 
-    public slots :
+    private slots :
         void defineModel();
         void defineStates();
         void defineColor();
@@ -40,7 +46,8 @@ class Automate : public QWidget
         void drawSurrounding();
         void displaySurrounding();
         void chooseModel();
-        void selectModel();
+        void applyModel();
+        void liberateDialog();
 };
 
 

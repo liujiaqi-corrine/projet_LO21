@@ -1,10 +1,9 @@
 #include "Automate.h"
 
+
+
 Automate::Automate() : QWidget()
 {
-    setMinimumSize(600,600);
-    setWindowTitle("Automate en Y");
-
     added = 0;
 
     b_library = new QPushButton("Bibliothèque",this);
@@ -12,6 +11,15 @@ Automate::Automate() : QWidget()
 
     lib = new Library;
     grille = new Grid(10,10,this);
+
+    drawInterface();
+
+}
+
+void Automate::drawInterface(){
+
+    setMinimumSize(600,600);
+    setWindowTitle("Automate en Y");
 
     QVBoxLayout *principal = new QVBoxLayout;
         principal->addWidget(b_library);
@@ -27,8 +35,6 @@ Automate::Automate() : QWidget()
 
 void Automate::chooseModel(){
 
-
-    //QLCDNumber* nombre = new QLCDNumber(lib->getListModels().size()) ;
     QLCDNumber* nombre = new QLCDNumber ;
     nombre->display((int) lib->getListModels().size());
 
@@ -59,18 +65,21 @@ void Automate::chooseModel(){
         infos->setLayout(vertical);
         infos->show();
 
-    QObject::connect(valider,&QPushButton::clicked,this,&Automate::selectModel);
+    QObject::connect(valider,&QPushButton::clicked,this,&Automate::applyModel);
     QObject::connect(valider,&QPushButton::clicked,infos,&QDialog::close);
     QObject::connect(creer,&QPushButton::clicked,this,&Automate::defineModel);
     QObject::connect(creer,&QPushButton::clicked,infos,&QDialog::close);
     QObject::connect(annuler,&QPushButton::clicked,infos,&QDialog::close);
+    QObject::connect(annuler,&QPushButton::clicked,this,&Automate::liberateDialog);
+
+
 
 }
 
-void Automate::selectModel(){
+void Automate::applyModel(){
 
     lib->setCurrentModel(list->currentIndex());
-    model=lib->getCurrentModel();
+    grille->resetGrid();
 
 }
 
@@ -106,6 +115,7 @@ void Automate::defineModel(){
     QObject::connect(suivant,&QPushButton::clicked,this,&Automate::defineStates);
     QObject::connect(suivant,&QPushButton::clicked,infos,&QDialog::close);
     QObject::connect(annuler,&QPushButton::clicked,infos,&QDialog::close);
+    QObject::connect(annuler,&QPushButton::clicked,this,&Automate::liberateDialog);
 
 }
 
@@ -114,13 +124,14 @@ void Automate::defineStates(){
 
     //Creation du Modele selon les infos récupérés dans defineState
     if(added==0) {
-        model = new Model(nom->text(),nb->value());
-        lib->addModel(model);
-        grille->setModele(model);
+        lib->addModel(nom->text(),nb->value()); //Le modele est ajouté à la fin de la liste
+        //model = new Model(nom->text(),nb->value());
+        //lib->addModel(model);
+        //grille->setModele(model);
     }
 
     //Ajout de l'Etat récupérés dans l'appel à defineStates précedent
-    if(added>0) model->getListStates()[added-1] = new State(added-1,*couleur,label->text());
+    if(added>0) lib->getListModels()[lib->getListModels().size()-1]->getListStates()[added-1] = new State(added-1,QColor(*couleur),label->text());
 
     if (added==nb->value()) {
         this->defineSurrounding();
@@ -175,10 +186,11 @@ void Automate::defineColor(){
 void Automate::defineSurrounding(){
 
     //added=0; pour pouvoir recreer un modele
+
     nom = new QLineEdit;
     nb = new QSpinBox;
-        nb->setMaximum(5);
-        nb->setMinimum(3);
+        nb->setMaximum(4);
+        nb->setMinimum(2);
 
     QPushButton *annuler = new QPushButton("Annuler");
     QPushButton *suivant = new QPushButton("Suivant");
@@ -210,13 +222,13 @@ void Automate::defineSurrounding(){
 void Automate::drawSurrounding(){
 
 
-    model->setVoisinage(nb->value()*2-1);
+    lib->getListModels()[lib->getListModels().size()-1]->setVoisinage(nb->value()*2-1);
 
     QGroupBox* texte = new QGroupBox("Definissez le voisinage de la cellule centrale :");
     QPushButton *valider = new QPushButton("Valider");
 
-    Grid* voisins = new Grid(model->getVoisinage()->getDiametre(),model->getVoisinage()->getDiametre(),texte);
-    voisins->setModele(new Model());
+    Grid* voisins = new Grid(nb->value()*2-1,texte);
+    //voisins->setModele(new Model());
     //voisins->item(nb->value()/2+1, nb->value()/2+1)->setBackground(QBrush(QColor(Qt::black)));
 
     QHBoxLayout *boutons = new QHBoxLayout;
@@ -234,9 +246,10 @@ void Automate::drawSurrounding(){
        infos->show();
 
    QObject::connect(valider,&QPushButton::clicked,infos,&QDialog::close);
-   QObject::connect(voisins,&Grid::cellClicked,model->getVoisinage(),&Surrounding::setInteractable);
+   QObject::connect(voisins,&Grid::cellClicked,lib->getListModels()[lib->getListModels().size()-1]->getVoisinage(),&Surrounding::setInteractable);
    //QObject::connect(voisins,&Grid::cellClicked,this,&Automate::displaySurrounding);
    QObject::connect(valider,&QPushButton::clicked,this,&Automate::chooseModel);
+   //QObject::connect(valider,&QPushButton::clicked,this,&Automate::liberateDialog);
 
 }
 
@@ -244,11 +257,12 @@ void Automate::displaySurrounding(){
 
     QPushButton *terminer = new QPushButton("Terminer");
 
-    Grid* voisins = new Grid(grille->getModel()->getVoisinage()->getDiametre(),grille->getModel()->getVoisinage()->getDiametre(),this);
-    voisins->setModele(new Model());
+    //Grid* voisins = new Grid(grille->getParent()->getLib()->getCurrentModel()->getVoisinage()->getDiametre(),grille->getParent()->getLib()->getCurrentModel()->getVoisinage()->getDiametre(),this);
+    //voisins->setModele(new Model());
+    Grid* voisins = new Grid(grille->getParent()->getLib()->getCurrentModel()->getVoisinage()->getDiametre(),this);
     for (int i=0; i<voisins->rowCount(); i++){
         for (int j=0; j<voisins->columnCount(); j++){
-            if (grille->getModel()->getVoisinage()->getInteractable()[voisins->rowCount()*i+j] == true )
+            if (grille->getParent()->getLib()->getCurrentModel()->getVoisinage()->getInteractable()[voisins->rowCount()*i+j] == true )
                 voisins->getlistCells()[i][j]->setBackground(QBrush(QColor(Qt::black)));
         }
     }
@@ -270,4 +284,19 @@ void Automate::displaySurrounding(){
 
 }
 
+void Automate::liberateDialog(){
+
+    //added=0; ajouter apres pour pouvoir recreer un modele
+
+    delete infos;
+    delete nom;
+    delete nb;
+    delete color;
+    delete couleur;
+    delete label;
+    //delete list;
+
+
+
+}
 

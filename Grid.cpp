@@ -1,9 +1,11 @@
 #include "Grid.h"
-#include "Model.h"
 
 //Grid::Grid(unsigned int _length, unsigned int _width) : length(_length), width(_width){};
 
-Grid::Grid(int rows, int columns, QWidget *parent) : QTableWidget(rows, columns, parent) {
+Grid::Grid(int rows, int columns, QWidget *_parent) : QTableWidget(rows, columns, _parent) {
+
+    parent = (Automate*) _parent;
+    modelBase=nullptr;
 
     //length = rows;
     //width = columns;
@@ -17,7 +19,8 @@ Grid::Grid(int rows, int columns, QWidget *parent) : QTableWidget(rows, columns,
     //this->horizontalHeader()->setStretchLastSection(true);
     //this->verticalHeader()->setStretchLastSection(true);
 
-    model = new Model();
+    //Model* model = new Model();
+    //this->parent()->getLib()->getCurrentModel();
 
     listCells = new Cell**[rows];
     for (int i=0; i<rows; i++){
@@ -25,7 +28,7 @@ Grid::Grid(int rows, int columns, QWidget *parent) : QTableWidget(rows, columns,
         for (int j=0; j<columns; j++) {
             listCells[i][j] = new Cell(i,j);
             this->setItem(i,j,listCells[i][j]);
-            listCells[i][j]->setState((model->getListStates()[0]));
+            listCells[i][j]->setState((parent->getLib()->getCurrentModel()->getListStates()[0])); //affiche aussi la 1er lettre du label
             listCells[i][j]->setBackground(QBrush(listCells[i][j]->getState()->getColor()));
         }
     }
@@ -39,17 +42,61 @@ Grid::Grid(int rows, int columns, QWidget *parent) : QTableWidget(rows, columns,
 
 }
 
+
+
 void Grid::changeState(int row, int column){
 
 
     int i = this->listCells[row][column]->getState()->getIndex();
 
-    this->listCells[row][column]->setState(model->getListStates()[(i+1)%model->getNbState()]);
+    this->listCells[row][column]->setState(parent->getLib()->getCurrentModel()->getListStates()[(i+1)%parent->getLib()->getCurrentModel()->getNbState()]);
 
     this->listCells[row][column]->setBackground(QBrush(listCells[row][column]->getState()->getColor()));
 
     listCells[row][column]->setText(listCells[row][column]->getState()->getLabel()[0]);
+    //listCells[row][column]->setText(QString::number(listCells[row][column]->getState()->getIndex()));
 
+}
+
+void Grid::resetGrid(){
+
+    for (int i=0; i<rowCount(); i++){
+        for (int j=0; j<columnCount(); j++) {
+    listCells[i][j]->setState((parent->getLib()->getCurrentModel()->getListStates()[0]));
+    listCells[i][j]->setBackground(QBrush(listCells[i][j]->getState()->getColor()));
+        }
+    }
+
+}
+
+Grid::Grid(int size, QWidget* parent) : QTableWidget(size, size, parent) {
+    parent = nullptr;
+    this->horizontalHeader()->setVisible(false);
+    this->verticalHeader()->setVisible(false);
+    this->setSelectionMode(QAbstractItemView::SingleSelection);
+    this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    this->resizeColumnsToContents();
+    this->resizeRowsToContents();
+    modelBase = new Model();
+    listCells = new Cell**[size];
+    for (int i=0; i<size; i++){
+        listCells[i] = new Cell*[size];
+        for (int j=0; j<size; j++) {
+            listCells[i][j] = new Cell(i,j);
+            this->setItem(i,j,listCells[i][j]);
+            listCells[i][j]->setState(modelBase->getListStates()[0]);
+            listCells[i][j]->setBackground(QBrush(listCells[i][j]->getState()->getColor()));
+        }
+    }
+    QObject::connect(this,&Grid::cellClicked,this,&Grid::changeStateSurrounding);
+}
+
+void Grid::changeStateSurrounding(int row, int column){
+    int i = this->listCells[row][column]->getState()->getIndex();
+    this->listCells[row][column]->setState(modelBase->getListStates()[(i+1)%modelBase->getNbState()]);
+    this->listCells[row][column]->setBackground(QBrush(listCells[row][column]->getState()->getColor()));
+    listCells[row][column]->setText(listCells[row][column]->getState()->getLabel()[0]);
 }
 
 /*void Grid::deblockCells(){
@@ -75,4 +122,4 @@ void Grid::setlistCells(Cell*** _listCells) {listCells = _listCells;}
 
 //void Grid::setWidth(unsigned int _width) {width = _width;}
 
-void Grid::setModele(Model* _modele) {model = _modele;}
+//void Grid::setModele(Model* _modele) {model = _modele;}
