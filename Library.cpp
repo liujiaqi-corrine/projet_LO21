@@ -8,7 +8,7 @@ Library::Library(){
     listModels.push_back(createLifeGame());
     listModels.push_back(createBrianSBrain());
 
-    currentModel=listModels[1];
+    currentModel=listModels[0];
 
 }
 

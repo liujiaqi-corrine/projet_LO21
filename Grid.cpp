@@ -27,7 +27,7 @@ Grid::Grid(int rows, int columns, QWidget *_parent) : QTableWidget(rows, columns
         listCells[i] = new Cell*[columns];
         for (int j=0; j<columns; j++) {
             listCells[i][j] = new Cell(i,j);
-            this->setItem(i,j,listCells[i][j]);
+            this->setItem(i,j,listCells[i][j]); // Obligation de setItem sinon pas content
             listCells[i][j]->setState((parent->getLib()->getCurrentModel()->getListStates()[0])); //affiche aussi la 1er lettre du label
             listCells[i][j]->setBackground(QBrush(listCells[i][j]->getState()->getColor()));
         }
@@ -68,6 +68,18 @@ void Grid::resetGrid(){
     }
 
 }
+
+void Grid::updateGrid(Cell*** newCells){
+
+    for (int i=0; i<rowCount(); i++){
+        for (int j=0; j<columnCount(); j++) {
+            this->setItem(i,j,newCells[i][j]);
+        }
+    }
+
+
+
+};
 
 Grid::Grid(int size, QWidget* parent) : QTableWidget(size, size, parent) {
     parent = nullptr;

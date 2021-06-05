@@ -34,6 +34,7 @@ class Grid : public QTableWidget
         //Model* getModel() const {return model;}
 
         void resetGrid();
+        void updateGrid(Cell*** newCells);
 
         //void setModele(Model* _modele);
 

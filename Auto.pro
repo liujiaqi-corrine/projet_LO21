@@ -10,9 +10,13 @@ CONFIG += c++11
 
 SOURCES += \
     *.cpp \
+    Config.cpp \
+    Rules.cpp
 
 HEADERS += \
     *.h \
+    Config.h \
+    Rules.h
 
 FORMS +=
 

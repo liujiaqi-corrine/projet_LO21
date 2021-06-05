@@ -7,6 +7,7 @@ Model::Model(QString _name, int _nbState)
 
     listStates= new State*[nbState];
     voisinage= nullptr;
+    rule = nullptr;
 }
 
 Model::Model(){
