@@ -1,12 +1,18 @@
+#include "main.h"
 #include <QApplication>
-#include "Automate.h"
+#include "controllers/C_MainWindow.h"
+
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
+    QApplication app(argc, argv);
 
-    Automate simulateur;
-    simulateur.show();
+    // Instantiate main window controller and display view
+    C_MainWindow *mainWindowController = new C_MainWindow(&app);
+    mainWindowController->init();
 
-    return a.exec();
+    // Show the view
+    mainWindowController->getView()->show();
+
+    return app.exec();
 }

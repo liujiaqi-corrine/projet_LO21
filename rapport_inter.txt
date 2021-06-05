@@ -1,4 +1,4 @@
-apports intermédiaires
+Rapports intermédiaires
 Pour mener ce projet, vous devrez vous organiser de manière efficace. Il sera donc important de tenterde réfléchir aux tâches que vous allez devoir réaliser en vous posant pour chacune d’elle les questionssuivantes :
 	— Cette tâche peut-elle être encore découpée en sous-tâches ?
 	— Quelle est la complexité de la tâche ?
