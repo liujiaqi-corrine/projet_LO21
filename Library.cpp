@@ -32,9 +32,15 @@ Model* Library::createLifeGame(){
     lifeGame->setVoisinage(3);
     for (int i=0; i<3; i++)
         for (int j=0; j<3; j++)
-            if (i!=j) lifeGame->getVoisinage()->setInteractable(i,j);
+            if (!(i==1 && j==1)) lifeGame->getVoisinage()->setInteractable(i,j);
 
     //Definition Regles
+    lifeGame->setRule(new Rule_Intension("Regles LifeGame",lifeGame,2));
+        //Pour l'etat mort
+        lifeGame->getRule()->setVoisins(0,1,1,3,3);
+        lifeGame->getRule()->setVoisins(1,1,1,2,3);
+        lifeGame->getRule()->setVoisins(1,0,0,0,1);
+        lifeGame->getRule()->setVoisins(1,0,0,4,1000);
 
     return lifeGame;
 }

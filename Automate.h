@@ -21,14 +21,17 @@ class Automate : public QWidget
     Automate();
         //virtual Automate* parent() {return this;}
         Library* getLib() const {return lib;}
+        void setAuthozied(bool value) {authorized =value;}
 
     private:
         QPushButton *b_library;
         QPushButton *b_voisinage;
         QPushButton *b_rules;
         QPushButton *b_next;
+        QSpinBox *b_run;
         Grid* grille;
         Library* lib;
+        bool authorized;
         //Rules* rule;
         void drawInterface();
 
@@ -62,6 +65,7 @@ class Automate : public QWidget
         void defineRules();
         void defineRulesStates();
         void next();
+        void run();
 };
 
 

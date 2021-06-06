@@ -19,6 +19,14 @@ Cell::Cell(int _x, int _y, int type) : QTableWidgetItem(type) {
 
 }
 
+Cell::Cell(Cell* copie){
+
+    x = copie->getX();
+    y = copie->getY();
+    state = copie->getState();
+
+}
+
 
 int Cell::getX() const{return x;}
 

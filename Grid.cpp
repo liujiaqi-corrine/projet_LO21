@@ -67,17 +67,25 @@ void Grid::resetGrid(){
         }
     }
 
+
+
 }
 
 void Grid::updateGrid(Cell*** newCells){
 
+    //apres penser à save listCells pour l'historique
+
+    listCells=newCells;
+
     for (int i=0; i<rowCount(); i++){
         for (int j=0; j<columnCount(); j++) {
-            this->setItem(i,j,newCells[i][j]);
+            this->setItem(i,j, listCells[i][j]);
+            listCells[i][j]->setBackground(QBrush(listCells[i][j]->getState()->getColor()));
         }
     }
 
-
+    parent->setAuthozied(true);
+    QThread::msleep(1000);
 
 };
 

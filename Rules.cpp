@@ -1,20 +1,20 @@
 #include "Rules.h"
 
-/*Rules::Rules(QString _nom ,Model* _parent) {
+/*Rule_Intension::Rule_Intension(QString _nom ,Model* _parent, int nb) : Rules(_nom, _parent) {
 
-    nom = _nom;
-    parent = _parent;
+     states_rules = new std::vector<condition>**[nb]; //pour chaque etat/
+     for (int i=0; i<nb; i++) states_rules[i] = new std::vector<condition>*[nb]; // nb transfo possible / etat
 
-}*/
+     for (int i=0; i<nb; i++) // pour etat destination potentielle
+         for (int j=0; j<nb; j++)
+             states_rules[i][j] = new std::vector<condition>;
 
+}
 
-/*Rule_Intension::Rule_Intension(QString _nom ,Model* _parent) : Rules(_nom, _parent) {
-    nb_voisins.push_back(1);
+void Rule_Intension::setVoisins(int etat,int suivant, int comptant, int _min, int _max){
 
-}*/
-
-/*Rule_Extension::Rule_Extension(QString _nom ,Model* _parent) : Rules(_nom, _parent) {
-    configs.push_back(nullptr);
+    condition cond = {comptant, _min, _max};
+    states_rules[etat][suivant]->push_back(cond);
 
 }*/
 

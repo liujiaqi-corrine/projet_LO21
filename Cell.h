@@ -14,6 +14,7 @@ class Cell : public QTableWidgetItem
     public :
 
         Cell(int _x, int _y, int type = Type);
+        Cell(Cell* copie);
         ~Cell() = default;
 
         int getX() const;

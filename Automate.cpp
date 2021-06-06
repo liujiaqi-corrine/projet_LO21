@@ -1,25 +1,42 @@
 #include "Automate.h"
-
-
+#include <windows.h>
 
 Automate::Automate() : QWidget()
 {
     added = 0; //les deux added seront unissables apres, la maintenant flemme
     added_rules = 0;
     added_states=0;
+    authorized = true;
 
     b_library = new QPushButton("Bibliothèque",this);
     b_voisinage = new QPushButton("Afficher Voisinage",this);
     b_rules = new QPushButton("Definir règles",this);
     b_next = new QPushButton("Grille suivante",this);
+    b_run = new QSpinBox();
+        b_run->setMinimum(1);
 
     lib = new Library;
     grille = new Grid(10,10,this);
+
+    /*for(int i=0;i<3;i++)
+        for(int j=0;j<3;j++)
+            for(int l=0;l<3;l++)
+                for(int k=0;k<3;k++)
+                    qDebug("i : %d - j : %d - l : %d - k : %d",i,j,l,k);*/
+
     drawInterface();
 
 }
 
+void Automate::run(){
+
+    for (int i=0; i<b_run->value(); i++) next();
+
+}
+
 void Automate::next(){
+
+    while (!authorized);
 
     //Allocation memoire
     Cell*** nextCells = new Cell**[grille->rowCount()];  //on garce Cell*** pour rester coherant avec grid.h
@@ -32,60 +49,102 @@ void Automate::next(){
     int rayon = lib->getCurrentModel()->getVoisinage()->getDiametre()/2;
     int diametre = lib->getCurrentModel()->getVoisinage()->getDiametre();
     int* compteur = new int[lib->getCurrentModel()->getNbState()];
-    bool verif = true;
-
-    //initialisation compteur
-    for (int i=0; i<lib->getCurrentModel()->getNbState(); i++) compteur[i]=0;
 
     //Calcul //Modulo retourne un negatif si on entre un négatif
-    for (int i=0; i<grille->rowCount(); i++) //pour chaque cellule de la grille
+    for (int i=0; i<grille->rowCount(); i++){ //pour chaque cellule de la grille
+
         for(int j=0; j<grille->columnCount(); j++){
 
-            verif = true;
-            for (int y=0; y<lib->getCurrentModel()->getNbState(); y++) compteur[y]=0; //Remise à 0 du compteur
-            for (int k=(grille->rowCount() + ((i-rayon) % grille->rowCount())) % grille->rowCount();k<=(grille->rowCount() + ((i+rayon) % grille->rowCount())) % grille->rowCount();k++){ // pour chaque potentiel voisin de la cellule
-                for(int l=(grille->columnCount() + ((j-rayon) % grille->columnCount())) % grille->columnCount();l<=(grille->columnCount() + ((j+rayon) % grille->columnCount())) % grille->columnCount();l++){
-                    qDebug("k : %d - l : %d",k,l);
-                    if (k==i && l==j) break; //Cellule centrale ignoré
+            //Remise à 0 du compteur
+            for(int y=0; y<lib->getCurrentModel()->getNbState(); y++) compteur[y]=0;
 
-                    //Fait partie du voisinage et compte le nombre de voisins/etats
-                    if (lib->getCurrentModel()->getVoisinage()->getInteractable()[diametre*(k%diametre)+(l%diametre)])
+            bool verif = false;
+
+
+            int k=((grille->rowCount() + ((i-rayon) % grille->rowCount())) % grille->rowCount());
+            int cptk = 0;
+            do
+            {
+                int cptl =0;
+                int l=((grille->columnCount() + ((j-rayon) % grille->columnCount())) % grille->columnCount());
+                do{
+
+                    //qDebug("%d : %d - %d : %d",i,j,k,l); detection + verif du voisinage OK !
+                    //Si fait partie du voisinage + compte le nombre de voisins/etats
+                    //qDebug("    Position Voisinage : %d - %d",cptk,cptl);
+                    if (lib->getCurrentModel()->getVoisinage()->getInteractable()[diametre*cptk+cptl])
                         //Compter cb de voisins/etat la cellule possede
                         compteur[grille->getlistCells()[k][l]->getState()->getIndex()]++;
-                }
+
+                    l++;
+                    l = l%grille->columnCount();
+                    cptl++;
+
+                } while (cptl<diametre);
+                k++;
+                k = k%grille->rowCount();
+                cptk++;
+            } while (cptk<diametre);
+
+            //for(int y=0; y<lib->getCurrentModel()->getNbState(); y++) qDebug("%d : %d - %d : %d",i,j,y,compteur[y]);
+
+            //on connait maintenant les voisins de la cellule [i,j]
+            //Verification correspondances des Regles
+
+            for (int z=0; z<lib->getCurrentModel()->getNbState(); z++){ //pour chaque etat
+
+                for (int a=0; a< (int) lib->getCurrentModel()->getRule()->getConditions(grille->getlistCells()[i][j]->getState()->getIndex(),z)->size(); a++) // on recupere les conditions de z
+                    if (compteur[lib->getCurrentModel()->getRule()->getConditions(grille->getlistCells()[i][j]->getState()->getIndex(),z)->operator[](a).index_comptant] >= lib->getCurrentModel()->getRule()->getConditions(grille->getlistCells()[i][j]->getState()->getIndex(),z)->operator[](a).min)
+                    if (compteur[lib->getCurrentModel()->getRule()->getConditions(grille->getlistCells()[i][j]->getState()->getIndex(),z)->operator[](a).index_comptant] <= lib->getCurrentModel()->getRule()->getConditions(grille->getlistCells()[i][j]->getState()->getIndex(),z)->operator[](a).max)
+                    {   nextCells[i][j]->setState(lib->getCurrentModel()->getListStates()[lib->getCurrentModel()->getRule()->getConditions(grille->getlistCells()[i][j]->getState()->getIndex(),z)->operator[](a).index_comptant]);
+                        verif = true;
+                        qDebug("changement %d:%d",i,j);
+                        break;}
+                if (verif) break;
             }
-
-            //Recherche correspondances des Regles
-            /*for (int z=0; z<lib->getCurrentModel()->getNbState(); z++){ //pour chaque etat
-                for(int a=0; a<lib->getCurrentModel()->getNbState(); a++){ // on verifie les regles d'un etat pour tous les etats
-                    if (lib->getCurrentModel()->getRule()->getVoisinsMax(z)[a] == -1) break; //Etat non concernee par la regle
-                    if ((compteur[z] > lib->getCurrentModel()->getRule()->getVoisinsMax(z)[a]) || (compteur[z] < lib->getCurrentModel()->getRule()->getVoisinsMin(z)[a])){
-                        verif = false;
-                        break;
-                    }
-                }
-            }
-
-            for(int a=0; a<lib->getCurrentModel()->getNbState(); a++){ // on verifie les regles d'un etat pour tous les etats
-                if (lib->getCurrentModel()->getRule()->getVoisinsMax(grille->getlistCells()[i][j]->getState()->getIndex())[a] == -1) break; //Etat non concernee par la regle
-                if ((compteur[grille->getlistCells()[i][j]->getState()->getIndex()] > lib->getCurrentModel()->getRule()->getVoisinsMax(grille->getlistCells()[i][j]->getState()->getIndex())[a])
-                || (compteur[grille->getlistCells()[i][j]->getState()->getIndex()] < lib->getCurrentModel()->getRule()->getVoisinsMin(grille->getlistCells()[i][j]->getState()->getIndex())[a])){
-                    verif = false;
-                    break;
-                }
-            }
-
-            //Mis à jour selon verifs
-            if (verif)
-                nextCells[i][j]->setState(lib->getCurrentModel()->getListStates()[grille->getlistCells()[i][j]->getState()->getIndex()]); //ICI POUR LE CHOIX DE L ETAT SUIVANT
-            else
-                nextCells[i][j]->setState(grille->getlistCells()[i][j]->getState());*/
-
-
+            if (!verif) {nextCells[i][j]->setState(grille->getlistCells()[i][j]->getState()); /*qDebug("conservation %d:%d",i,j);*/}
         }
+    }
 
-    //grille->updateGrid(nextCells);
+    grille->updateGrid(nextCells);
 
+    /*for (int k=((grille->rowCount() + ((i-rayon) % grille->rowCount())) % grille->rowCount());k!=((grille->rowCount() + ((i+rayon) % grille->rowCount())) % grille->rowCount());k++){ // pour chaque potentiel voisin de la cellule
+        k = k%grille->rowCount(); // si depasse vers +infini l'initervalle;
+        for(int l=((grille->columnCount() + ((j-rayon) % grille->columnCount())) % grille->columnCount());l!=((grille->columnCount() + ((j+rayon) % grille->columnCount())) % grille->columnCount());l++){
+            l = l%grille->columnCount();
+            qDebug("i : %d - j : %d - k : %d - l : %d",i,j,k,l);
+            //if (!(k==diametre/2 && l==diametre/2)) continue; //Cellule centrale ignoré
+
+            //Si fait partie du voisinage + compte le nombre de voisins/etats
+            if (lib->getCurrentModel()->getVoisinage()->getInteractable()[diametre*(k%diametre)+(l%diametre)])
+                //Compter cb de voisins/etat la cellule possede
+                compteur[grille->getlistCells()[k][l]->getState()->getIndex()]++;*/
+
+    //Recherche correspondances des Regles
+    /*for (int z=0; z<lib->getCurrentModel()->getNbState(); z++){ //pour chaque etat
+        for(int a=0; a<lib->getCurrentModel()->getNbState(); a++){ // on verifie les regles d'un etat pour tous les etats
+            if (lib->getCurrentModel()->getRule()->getVoisinsMax(z)[a] == -1) break; //Etat non concernee par la regle
+            if ((compteur[z] > lib->getCurrentModel()->getRule()->getVoisinsMax(z)[a]) || (compteur[z] < lib->getCurrentModel()->getRule()->getVoisinsMin(z)[a])){
+                verif = false;
+                break;
+            }
+        }
+    }
+
+    for(int a=0; a<lib->getCurrentModel()->getNbState(); a++){ // on verifie les regles d'un etat pour tous les etats
+        if (lib->getCurrentModel()->getRule()->getVoisinsMax(grille->getlistCells()[i][j]->getState()->getIndex())[a] == -1) break; //Etat non concernee par la regle
+        if ((compteur[grille->getlistCells()[i][j]->getState()->getIndex()] > lib->getCurrentModel()->getRule()->getVoisinsMax(grille->getlistCells()[i][j]->getState()->getIndex())[a])
+        || (compteur[grille->getlistCells()[i][j]->getState()->getIndex()] < lib->getCurrentModel()->getRule()->getVoisinsMin(grille->getlistCells()[i][j]->getState()->getIndex())[a])){
+            verif = false;
+            break;
+        }
+    }
+
+    //Mis à jour selon verifs
+    if (verif)
+        nextCells[i][j]->setState(lib->getCurrentModel()->getListStates()[grille->getlistCells()[i][j]->getState()->getIndex()]); //ICI POUR LE CHOIX DE L ETAT SUIVANT
+    else
+        nextCells[i][j]->setState(grille->getlistCells()[i][j]->getState());*/
 
 }
 
@@ -171,7 +230,7 @@ void Automate::defineRules(){
 
 void Automate::defineRulesStates(){ //Pour l'instant on crée les regles pour le modele courant
 
-
+    /*if (r_intension->isChecked() == true){
         lib->getCurrentModel()->setRule(new Rule_Intension(nom->text(),lib->getCurrentModel(),lib->getCurrentModel()->getNbState()));
 
 
@@ -236,7 +295,7 @@ void Automate::defineRulesStates(){ //Pour l'instant on crée les regles pour le
 
         QObject::connect(suivant,&QPushButton::clicked,infos,&QDialog::close);
         QObject::connect(suivant,&QPushButton::clicked,this,&Automate::defineRulesStates);
-
+    }*/
 }
 
 void Automate::drawInterface(){
@@ -244,11 +303,15 @@ void Automate::drawInterface(){
     setMinimumSize(600,600);
     setWindowTitle("Automate en Y");
 
+    QHBoxLayout *run = new QHBoxLayout;
+        run->addWidget(b_next);
+        run->addWidget(b_run);
+
     QVBoxLayout *principal = new QVBoxLayout;
         principal->addWidget(b_library);
         principal->addWidget(b_voisinage);
         principal->addWidget(b_rules);
-        principal->addWidget(b_next);
+        principal->addLayout(run);
         principal->addWidget(grille);
 
     setLayout(principal);
@@ -256,7 +319,7 @@ void Automate::drawInterface(){
     QObject::connect(b_library,&QPushButton::clicked,this,&Automate::chooseModel);
     QObject::connect(b_voisinage,&QPushButton::clicked,this,&Automate::displaySurrounding);
     QObject::connect(b_rules,&QPushButton::clicked,this,&Automate::chooseRules);
-    QObject::connect(b_next,&QPushButton::clicked,this,&Automate::next);
+    QObject::connect(b_next,&QPushButton::clicked,this,&Automate::run);
 
 }
 
