@@ -1,21 +1,20 @@
 #include "Config.h"
 
 
-/*void Config::addSet(int diametre){
+Config::Config(int _diametre, int _suivant){
 
-    int* set = new int[diametre*diametre];
+    diametre = _diametre;
+    nbCellule = diametre*diametre;
+    environment = new int[nbCellule];
+    suivant = _suivant;
 
-    //Initialisation
     for (int i=0; i<diametre; i++)
         for(int j=0; j<diametre; j++)
-            set[diametre*i+j]=0;
+            environment[diametre*i+j]=-1;
 
-    listSets.push_back(set);
+}
 
-}*/
+void Config::setEnvironment(Cell *item){
 
-//void Config::setSet(QTableWidgetItem* item){
-
-
-
-//}
+    environment[diametre*item->getX()+item->getY()]= item->getState()->getIndex();
+}

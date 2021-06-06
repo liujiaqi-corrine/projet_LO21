@@ -2,30 +2,33 @@
 #define CONFIG_H
 
 #include "State.h"
+#include "Cell.h"
 #include <vector>
 #include <QTableWidgetItem>
 
 class Config {
 
     private:
-        State* central;
-        std::vector<int*> listSets;
+        int diametre;
+        int nbCellule;
+        int* environment;
+        int suivant;
 
     public:
-        Config(State* _central) {central = _central;}
-        void addSet(int diametre);
+        Config(int _diametre, int _suivant);
 
     public slots:
-        void setSet(QTableWidgetItem* item);
-
-
-
-
-
-
-
+        //void setEnvironment(int _x, int _y, int _index);
+        void setEnvironment(Cell *item);
+        int* getEnvironment() {return environment;}
+        int getSuivant() {return suivant;}
 
 };
+
+// Une config est construite de cette façon :
+// grâce à l'indice du config* de rule_extension on connait l'état de départ
+// l'attribut suivant determine l'état de transformation si la config est respecté
+// l'environnement represente la config avec les indices qui designe les états (-1 si la case n'est pas prise en compte)
 
 
 

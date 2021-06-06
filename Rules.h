@@ -6,7 +6,7 @@
 // calcul de l'etat suivant en comparant toutes config avec un extrait de la grille avec la cellule centrale - si outer ?
 
 #include "Model.h"
-//#include "Config.h"
+#include "Config.h"
 #include <vector>
 
 class Model;
@@ -29,6 +29,7 @@ class Rules {
         Model* getParent() const {return parent;}
         virtual void setVoisins(int etat,int suivant, int comptant, int min, int max) = 0; //permet d'utiliser la bonne fonction des classes filles
         virtual std::vector<condition>* getConditions(int etat,int suivant) = 0;
+        //virtual std::vector<Config> getConfigs(int etat) = 0;
 
 };
 
@@ -66,17 +67,18 @@ class Rule_Intension : public Rules {
 
 };
 
-/*class Rule_Extension : public Rules {
+class Rule_Extension /*: public Rules*/ {
 
     private:
-        std::vector<Config*> configs;
+        std::vector<Config>* configs;
 
     public:
-        Rule_Extension(QString _nom ,Model* _parent) : Rules(_nom, _parent) {}
-        //void setConfigs() {configs.push_back(new Config());}
+        Rule_Extension(/*QString _nom ,Model* _parent,*/ int nb) /*: Rules(_nom, _parent)*/ {configs = new std::vector<Config>[nb];}
+        void addConfig(int etat, Config conf) {configs[etat].push_back(conf);}
+        std::vector<Config> getConfigs(int etat) {return configs[etat];}
 
 
-};*/
+};
 
 
 #endif // RULES_H

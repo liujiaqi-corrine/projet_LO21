@@ -84,8 +84,6 @@ void Grid::updateGrid(Cell*** newCells){
         }
     }
 
-    parent->setAuthozied(true);
-    QThread::msleep(1000);
 
 };
 

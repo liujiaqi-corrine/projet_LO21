@@ -39,8 +39,8 @@ Model* Library::createLifeGame(){
         //Pour l'etat mort
         lifeGame->getRule()->setVoisins(0,1,1,3,3);
         lifeGame->getRule()->setVoisins(1,1,1,2,3);
-        lifeGame->getRule()->setVoisins(1,0,0,0,1);
-        lifeGame->getRule()->setVoisins(1,0,0,4,1000);
+        lifeGame->getRule()->setVoisins(1,0,1,0,1);
+        lifeGame->getRule()->setVoisins(1,0,1,4,1000);
 
     return lifeGame;
 }
