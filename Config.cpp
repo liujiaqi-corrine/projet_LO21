@@ -1,6 +1,6 @@
 #include "Config.h"
 
-
+/*
 Config::Config(int _diametre, int _suivant){
 
     diametre = _diametre;
@@ -17,4 +17,4 @@ Config::Config(int _diametre, int _suivant){
 void Config::setEnvironment(Cell *item){
 
     environment[diametre*item->getX()+item->getY()]= item->getState()->getIndex();
-}
+}*/

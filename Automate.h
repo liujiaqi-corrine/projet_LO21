@@ -73,6 +73,7 @@ class Automate : public QWidget
         void nextConfig();
         void addConfig();
         void defineConfig();
+        //void setEntourage(int row, int column);
 };
 
 

@@ -27,6 +27,37 @@ Automate::Automate() : QWidget()
 
 }
 
+void Automate::drawInterface(){
+
+    setMinimumSize(600,600);
+    setWindowTitle("Automate en Y");
+
+    QHBoxLayout *run = new QHBoxLayout;
+        run->addWidget(b_next);
+        run->addWidget(b_run);
+
+    QVBoxLayout *principal = new QVBoxLayout;
+        principal->addWidget(b_library);
+        principal->addWidget(b_voisinage);
+        principal->addWidget(b_rules);
+        principal->addWidget(b_config);
+        principal->addWidget(b_reset);
+        principal->addLayout(run);
+        principal->addWidget(b_number);
+        principal->addWidget(grille);
+
+    setLayout(principal);
+
+    QObject::connect(b_library,&QPushButton::clicked,this,&Automate::chooseModel);
+    QObject::connect(b_voisinage,&QPushButton::clicked,this,&Automate::displaySurrounding);
+    QObject::connect(b_rules,&QPushButton::clicked,this,&Automate::chooseRules);
+    QObject::connect(b_next,&QPushButton::clicked,this,&Automate::run);
+    QObject::connect(b_reset,&QPushButton::clicked,this,&Automate::reset);
+    QObject::connect(b_config,&QPushButton::clicked,this,&Automate::defineConfig);
+
+}
+
+
 void Automate::run(){
 
     if (ran <  b_run->value()){
@@ -95,23 +126,23 @@ void Automate::next(){
                 cptk++;
             } while (cptk<diametre);
 
-            for(int y=0; y<lib->getCurrentModel()->getNbState(); y++) qDebug("%d : %d - %d : %d",i,j,y,compteur[y]);
+            //for(int y=0; y<lib->getCurrentModel()->getNbState(); y++) qDebug("%d : %d - %d : %d",i,j,y,compteur[y]);
 
             //on connait maintenant les voisins de la cellule [i,j]
             //Verification correspondances des Regles
 
             for (int z=0; z<lib->getCurrentModel()->getNbState(); z++){ //pour chaque etat
-                qDebug("destination z :%d",z);
-                qDebug("Nombre de regle pour z : %d",(int) lib->getCurrentModel()->getRule()->getConditions(grille->getlistCells()[i][j]->getState()->getIndex(),z)->size());
+                //qDebug("destination z :%d",z);
+                //qDebug("Nombre de regle pour z : %d",(int) lib->getCurrentModel()->getRule()->getConditions(grille->getlistCells()[i][j]->getState()->getIndex(),z)->size());
                 for (int a=0; a< (int) lib->getCurrentModel()->getRule()->getConditions(grille->getlistCells()[i][j]->getState()->getIndex(),z)->size(); a++){ // on recupere le nombre de conditions de z, si 0 pas de boucle
-                    qDebug("regle en cours d'examen a: %d",a);
-                    qDebug("%d:%d - Regle pour %d - min : %d - max : %d",i,j,lib->getCurrentModel()->getRule()->getConditions(grille->getlistCells()[i][j]->getState()->getIndex(),z)->operator[](a).index_comptant,lib->getCurrentModel()->getRule()->getConditions(grille->getlistCells()[i][j]->getState()->getIndex(),z)->operator[](a).min,lib->getCurrentModel()->getRule()->getConditions(grille->getlistCells()[i][j]->getState()->getIndex(),z)->operator[](a).max);
-                    qDebug("        %d : %d",lib->getCurrentModel()->getRule()->getConditions(grille->getlistCells()[i][j]->getState()->getIndex(),z)->operator[](a).index_comptant,compteur[lib->getCurrentModel()->getRule()->getConditions(grille->getlistCells()[i][j]->getState()->getIndex(),z)->operator[](a).index_comptant]);
+                    //qDebug("regle en cours d'examen a: %d",a);
+                    //qDebug("%d:%d - Regle pour %d - min : %d - max : %d",i,j,lib->getCurrentModel()->getRule()->getConditions(grille->getlistCells()[i][j]->getState()->getIndex(),z)->operator[](a).index_comptant,lib->getCurrentModel()->getRule()->getConditions(grille->getlistCells()[i][j]->getState()->getIndex(),z)->operator[](a).min,lib->getCurrentModel()->getRule()->getConditions(grille->getlistCells()[i][j]->getState()->getIndex(),z)->operator[](a).max);
+                    //qDebug("        %d : %d",lib->getCurrentModel()->getRule()->getConditions(grille->getlistCells()[i][j]->getState()->getIndex(),z)->operator[](a).index_comptant,compteur[lib->getCurrentModel()->getRule()->getConditions(grille->getlistCells()[i][j]->getState()->getIndex(),z)->operator[](a).index_comptant]);
                     if (compteur[lib->getCurrentModel()->getRule()->getConditions(grille->getlistCells()[i][j]->getState()->getIndex(),z)->operator[](a).index_comptant] <= lib->getCurrentModel()->getRule()->getConditions(grille->getlistCells()[i][j]->getState()->getIndex(),z)->operator[](a).max)
                     if (compteur[lib->getCurrentModel()->getRule()->getConditions(grille->getlistCells()[i][j]->getState()->getIndex(),z)->operator[](a).index_comptant] >= lib->getCurrentModel()->getRule()->getConditions(grille->getlistCells()[i][j]->getState()->getIndex(),z)->operator[](a).min)
                     {   nextCells[i][j]->setState(lib->getCurrentModel()->getListStates()[z]);
                         verif = true;
-                        qDebug("changement %d:%d",i,j);
+                        //qDebug("changement %d:%d",i,j);
                         break;}
 
                 }
@@ -187,7 +218,7 @@ void Automate::nextConfig(){
 
 void Automate::addConfig(){
 
-    /*list = new QComboBox;
+    list = new QComboBox;
     for (int i=0;i<lib->getCurrentModel()->getNbState();i++) list->addItem(lib->getCurrentModel()->getListStates()[i]->getLabel());
 
 
@@ -213,7 +244,7 @@ void Automate::addConfig(){
 
    QObject::connect(valider,&QPushButton::clicked,this,&Automate::defineConfig);
    QObject::connect(valider,&QPushButton::clicked,infos,&QDialog::close);
-   QObject::connect(annuler,&QPushButton::clicked,infos,&QDialog::close);*/
+   QObject::connect(annuler,&QPushButton::clicked,infos,&QDialog::close);
 
 }
 
@@ -224,7 +255,7 @@ void Automate::defineConfig(){
 
     QPushButton *valider = new QPushButton("Valider");
 
-    Grid* voisins = new Grid(nb->value()*2-1,infos);
+    Grid* voisins = new Grid(nb->value()*2-1,this);
 
     QVBoxLayout *vertical = new QVBoxLayout;
         vertical->addWidget(voisins);
@@ -237,10 +268,17 @@ void Automate::defineConfig(){
         infos->show();
 
     QObject::connect(valider,&QPushButton::clicked,infos,&QDialog::close);
-    //QObject::connect(voisins,&Grid::itemClicked,&(lib->getCurrentModel()->getRuleExtension()->getConfigs(list->currentIndex()).operator[](lib->getCurrentModel()->getRuleExtension()->getConfigs(list->currentIndex()).size()-1)),&Config::setEnvironment);
+    //QObject::connect(voisins,&Grid::cellClicked,this,&Automate::setEntourage);
     QObject::connect(valider,&QPushButton::clicked,this,&Automate::chooseModel);
 
 }
+
+/*void Automate::setEntourage(int row, int column){
+
+    lib->getCurrentModel()->getRuleExtension()->getConfigs(list->currentIndex()).operator[](z).getEnvironment()[diametre*k+l];
+
+
+}*/
 
 void Automate::chooseRules(){
 
@@ -391,35 +429,6 @@ void Automate::defineRulesStates(){ //Pour l'instant on crée les regles pour le
     }*/
 }
 
-void Automate::drawInterface(){
-
-    setMinimumSize(600,600);
-    setWindowTitle("Automate en Y");
-
-    QHBoxLayout *run = new QHBoxLayout;
-        run->addWidget(b_next);
-        run->addWidget(b_run);
-
-    QVBoxLayout *principal = new QVBoxLayout;
-        principal->addWidget(b_library);
-        principal->addWidget(b_voisinage);
-        principal->addWidget(b_rules);
-        principal->addWidget(b_config);
-        principal->addWidget(b_reset);
-        principal->addLayout(run);
-        principal->addWidget(b_number);
-        principal->addWidget(grille);
-
-    setLayout(principal);
-
-    QObject::connect(b_library,&QPushButton::clicked,this,&Automate::chooseModel);
-    QObject::connect(b_voisinage,&QPushButton::clicked,this,&Automate::displaySurrounding);
-    QObject::connect(b_rules,&QPushButton::clicked,this,&Automate::chooseRules);
-    QObject::connect(b_next,&QPushButton::clicked,this,&Automate::run);
-    QObject::connect(b_reset,&QPushButton::clicked,this,&Automate::reset);
-    QObject::connect(b_config,&QPushButton::clicked,this,&Automate::defineConfig);
-
-}
 
 void Automate::reset(){
 
