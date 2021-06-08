@@ -29,6 +29,7 @@ class Automate : public QWidget
         QPushButton *b_next;
         QPushButton *b_reset;
         QPushButton *b_config;
+        QPushButton *b_random;
         QSpinBox *b_run;
         QLCDNumber* b_number;
         Grid* grille;
@@ -73,6 +74,7 @@ class Automate : public QWidget
         void nextConfig();
         void addConfig();
         void defineConfig();
+        void generateRandomGrid();
         //void setEntourage(int row, int column);
 };
 

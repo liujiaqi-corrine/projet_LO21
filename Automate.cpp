@@ -16,14 +16,31 @@ Automate::Automate() : QWidget()
     b_next = new QPushButton("Grille suivante",this);
     b_reset = new QPushButton("Reset",this);
     b_run = new QSpinBox();
-        b_run->setMinimum(1);
+        //b_run->setMinimum(1);
     b_number = new QLCDNumber();
     b_config = new QPushButton("Ajouter Config");
+    b_random = new QPushButton("Grille aléatoire");
 
     lib = new Library;
     grille = new Grid(20,20,this);
 
     drawInterface();
+
+}
+
+
+void Automate::generateRandomGrid(){
+
+    Cell*** nextCells = new Cell**[grille->rowCount()];
+    for (int i=0; i<grille->rowCount(); i++){
+        nextCells[i] = new Cell*[grille->columnCount()];
+        for (int j=0; j<grille->columnCount(); j++){
+            nextCells[i][j] = new Cell(i,j);
+            nextCells[i][j]->setState(lib->getCurrentModel()->getListStates()[QRandomGenerator::global()->bounded(0,lib->getCurrentModel()->getNbState())]);
+        }
+    }
+
+    grille->updateGrid(nextCells);
 
 }
 
@@ -44,6 +61,7 @@ void Automate::drawInterface(){
         principal->addWidget(b_reset);
         principal->addLayout(run);
         principal->addWidget(b_number);
+        principal->addWidget(b_random);
         principal->addWidget(grille);
 
     setLayout(principal);
@@ -54,6 +72,7 @@ void Automate::drawInterface(){
     QObject::connect(b_next,&QPushButton::clicked,this,&Automate::run);
     QObject::connect(b_reset,&QPushButton::clicked,this,&Automate::reset);
     QObject::connect(b_config,&QPushButton::clicked,this,&Automate::defineConfig);
+    QObject::connect(b_random,&QPushButton::clicked,this,&Automate::generateRandomGrid);
 
 }
 
