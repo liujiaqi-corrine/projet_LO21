@@ -21,7 +21,7 @@ Automate::Automate() : QWidget()
     b_config = new QPushButton("Ajouter Config");
 
     lib = new Library;
-    grille = new Grid(20,20,this);
+    grille = new Grid(5,5,this);
 
     drawInterface();
 
@@ -173,13 +173,12 @@ void Automate::nextConfig(){
 
     //Calcul //Attention :Modulo retourne un negatif si on entre un négatif
     for (int i=0; i<grille->rowCount(); i++){ //pour chaque cellule de la grille
-
         for(int j=0; j<grille->columnCount(); j++){
-            Rule_Extension* test = lib->getCurrentModel()->getRuleExtension();
-            std::vector<Config> te = lib->getCurrentModel()->getRuleExtension()->getConfigs(0);
-            bool verif2 = false; //si il a aucune config
-            for(int z=0; z< (int) lib->getCurrentModel()->getRuleExtension()->getConfigs(grille->getlistCells()[i][j]->getState()->getIndex()).size(); z++){ //pour chaque config d'etat
 
+            bool verif2 = false; //si il a aucune config
+            qDebug("%d-%d -> z %d",i,j,(int) lib->getCurrentModel()->getRuleExtension()->getConfigs(grille->getlistCells()[i][j]->getState()->getIndex()).size());
+            for(int z=0; z< (int) lib->getCurrentModel()->getRuleExtension()->getConfigs(grille->getlistCells()[i][j]->getState()->getIndex()).size(); z++){ //pour chaque config de l'etat de la cellule
+                qDebug("z %d",z);
                 verif2 = true;
 
                 // On verifie pour tous les voisins si les positions correspondent à la configuration
@@ -191,32 +190,35 @@ void Automate::nextConfig(){
                     int l=((grille->columnCount() + ((j-rayon) % grille->columnCount())) % grille->columnCount());
                     do{
 
-                                //Remplacer voisinage par config
-                        if (lib->getCurrentModel()->getVoisinage()->getInteractable()[diametre*cptk+cptl]) //Le voisin n'est pas concerné
+                        if (lib->getCurrentModel()->getVoisinage()->getInteractable()[diametre*cptk+cptl]){//qDebug("voisin teste"); //Le voisin est concerné != 0
                         if (lib->getCurrentModel()->getRuleExtension()->getConfigs(grille->getlistCells()[i][j]->getState()->getIndex()).operator[](z).getEnvironment()[diametre*cptk+cptl] != grille->getlistCells()[k][l]->getState()->getIndex()){
                             verif2 = false;
-                            break;
-                        }
+                            //qDebug("%d-%d -> Voisin %d:%d non --> false",i,j,k,l);
+                            //break;
+                        }}
 
-                        if (!verif2) break;
+                        //if (!verif2) break;
 
                         l++;
                         l = l%grille->columnCount();
                         cptl++;
 
                     } while (cptl<diametre);
-                    if (verif2) {
-                        nextCells[i][j]->setState(lib->getCurrentModel()->getListStates()[lib->getCurrentModel()->getRuleExtension()->getConfigs(grille->getlistCells()[i][j]->getState()->getIndex()).operator[](z).getSuivant()]);
-                        break;
-                    }
+                    //if (!verif2) break;
                     k++;
                     k = k%grille->rowCount();
                     cptk++;
                 } while (cptk<diametre);
+                if (verif2) { // si tous les voisins correspondent à la config
+                    qDebug("%d-%d en %d premier ",i,j,lib->getCurrentModel()->getRuleExtension()->getConfigs(grille->getlistCells()[i][j]->getState()->getIndex()).operator[](z).getCentral());
+                    nextCells[i][j]->setState(lib->getCurrentModel()->getListStates()[lib->getCurrentModel()->getRuleExtension()->getConfigs(grille->getlistCells()[i][j]->getState()->getIndex()).operator[](z).getCentral()]);
+                    //break;
+                } else // si la config ne correspondant pas et que c'est la derniere
+                if (z < (int) lib->getCurrentModel()->getRuleExtension()->getConfigs(grille->getlistCells()[i][j]->getState()->getIndex()).size()) {nextCells[i][j]->setState(grille->getlistCells()[i][j]->getState());
+                    qDebug("%d-%d en %d second",i,j,grille->getlistCells()[i][j]->getState()->getIndex());}
 
             }
-
-            if (!verif2) nextCells[i][j]->setState(grille->getlistCells()[i][j]->getState());
+            if (!verif2) {nextCells[i][j]->setState(grille->getlistCells()[i][j]->getState());qDebug("%d-%d en %d tres",i,j,grille->getlistCells()[i][j]->getState()->getIndex());}
         }
     }
 
@@ -662,20 +664,25 @@ void Automate::drawConfig(){
        infos->show();
 
    QObject::connect(valider,&QPushButton::clicked,infos,&QDialog::close);
-   QObject::connect(valider,&QPushButton::clicked,this,&Automate::validateSurrounding);
+   QObject::connect(valider,&QPushButton::clicked,this,&Automate::validateConfig);
    QObject::connect(annuler,&QPushButton::clicked,infos,&QDialog::close);
 }
 
 void Automate::validateConfig(){
 
-    if (!(lib->getCurrentModel()->getRuleExtension()))
-        lib->getCurrentModel()->setRuleExtension(new Rule_Extension(lib->getCurrentModel()->getNbState()));
+    if (!lib->getCurrentModel()->getRuleExtension()){
+        qDebug("ValidateConfig creation ruleExtension");
+        lib->getCurrentModel()->setRuleExtension(new Rule_Extension(lib->getCurrentModel()->getNbState()));}
 
-    Config* conf = new Config(lib->getCurrentModel()->getVoisinage()->getDiametre(), list->currentIndex());
+    Config* conf = new Config(lib->getCurrentModel()->getVoisinage()->getDiametre());
 
-    for (int i=0; i<nb->value()*2-1; i++)
-        for (int j=0; j<nb->value()*2-1; j++)
+    for (int i=0; i<lib->getCurrentModel()->getVoisinage()->getDiametre(); i++)
+        for (int j=0; j<lib->getCurrentModel()->getVoisinage()->getDiametre(); j++){
             conf->setEnvironment(i,j,voisins->getlistCells()[i][j]->getState()->getIndex());
+            qDebug("%d %d -> %d",i,j,voisins->getlistCells()[i][j]->getState()->getIndex());
+            qDebug("diametre/2 : %d",lib->getCurrentModel()->getVoisinage()->getDiametre()/2);
+            qDebug("Central : %d",conf->getCentral());
+        }
 
     lib->getCurrentModel()->getRuleExtension()->addConfig(list->currentIndex(),conf);
 }

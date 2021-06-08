@@ -12,15 +12,13 @@ class Config {
         int diametre;
         int nbCellule;
         int* environment;
-        int suivant;
 
     public:
-        Config(int _diametre, int _suivant) {
+        Config(int _diametre) {
 
             diametre = _diametre;
             nbCellule = diametre*diametre;
             environment = new int[nbCellule];
-            suivant = _suivant;
 
             for (int i=0; i<diametre; i++)
                 for(int j=0; j<diametre; j++)
@@ -32,7 +30,7 @@ class Config {
         void setEnvironment(int _x, int _y, int _index) {environment[diametre*_x+_y]= _index;}
         //void setEnvironment(Cell *item) {environment[diametre*item->getX()+item->getY()]= item->getState()->getIndex();}
         int* getEnvironment() {return environment;}
-        int getSuivant() {return suivant;}
+        int getCentral() {return environment[diametre*(diametre/2)+diametre/2];}
 
 };
 
