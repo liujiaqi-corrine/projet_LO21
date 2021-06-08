@@ -16,7 +16,7 @@ Automate::Automate() : QWidget()
     b_next = new QPushButton("Grille suivante",this);
     b_reset = new QPushButton("Reset",this);
     b_run = new QSpinBox();
-        //b_run->setMinimum(1);
+        b_run->setMinimum(1);
     b_number = new QLCDNumber();
     b_config = new QPushButton("Ajouter Config");
     b_random = new QPushButton("Grille aléatoire");

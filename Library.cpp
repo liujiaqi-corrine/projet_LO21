@@ -51,8 +51,8 @@ Model* Library::createBrianSBrain(){
 
     //Ajout des Etats
     briansbrain->getListStates()[0] = new State(0,QColor(Qt::green),"Zepos");
-    briansbrain->getListStates()[1] = new State(1,QColor(Qt::red),"excité");
-    briansbrain->getListStates()[2] = new State(2,QColor(Qt::yellow),"réfractaire");
+    briansbrain->getListStates()[1] = new State(1,QColor(Qt::red),"excite");
+    briansbrain->getListStates()[2] = new State(2,QColor(Qt::yellow),"refractaire");
 
     //Definition du voisinage
     briansbrain->setVoisinage(3);
@@ -62,6 +62,10 @@ Model* Library::createBrianSBrain(){
     briansbrain->getVoisinage()->setInteractable(2,1,1); //Sud
 
     //Definition Regles
+    briansbrain->setRule(new Rule_Intension("Regles Brian's Brain",briansbrain,3));
+        briansbrain->getRule()->setVoisins(0,1,1,2,2);
+        briansbrain->getRule()->setVoisins(1,2,0,0,1000);
+        briansbrain->getRule()->setVoisins(2,0,0,0,1000);
 
     return briansbrain;
 }
