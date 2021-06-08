@@ -9,15 +9,15 @@ class Surrounding : public QObject
     protected :
         State* Model; // Voisinage d'un Model
         int diametre;
-        bool* interactable; //Pas de <vector> car on changera pas la taille
+        int* interactable; //Pas de <vector> car on changera pas la taille
         int nbVoisins;
 
     public :
         Surrounding(int _diametre);
         //~Surrounding(); // error :undefined reference to vtable for
-        bool* getInteractable() const {return interactable;}
-        void setInteractable(int i, int j);
-        void setNotInteractable(int row, int colomn);
+        int* getInteractable() const {return interactable;}
+        void setInteractable(int row, int colomn, int index);
+        void setNotInteractable(int row, int colomn, int index);
         int getDiametre() const {return diametre;}
 
 

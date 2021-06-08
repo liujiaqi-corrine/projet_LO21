@@ -34,7 +34,9 @@ class Model
         void setVoisinage(int _diametre) {voisinage = new Surrounding(_diametre);}
         void setName(QString _name);
         void setRule(Rules* _rule) {rule = _rule;}
-        void setRuleExtension(Rule_Extension* _rule) {extension = _rule;}
+        void setRuleExtension(Rule_Extension* _rule) {if (!_rule) qDebug("this null Model.h");extension = _rule;}
+        //void setRuleExtension(Rule_Extension* _rule) {if (!_rule) qDebug("this null Model.h");extension = _rule;}
+
 
         //void init_Grid(int width, int length);
         //void add_State(State* new_state);

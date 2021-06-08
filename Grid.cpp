@@ -5,7 +5,6 @@
 Grid::Grid(int rows, int columns, QWidget *_parent) : QTableWidget(rows, columns, _parent) {
 
     parent = (Automate*) _parent;
-    modelBase=nullptr;
 
     //length = rows;
     //width = columns;
@@ -87,8 +86,8 @@ void Grid::updateGrid(Cell*** newCells){
 
 };
 
-Grid::Grid(int size, QWidget* parent) : QTableWidget(size, size, parent) {
-    parent = nullptr;
+Grid::Grid(int size, QWidget* _parent) : QTableWidget(size, size, _parent) {
+    parent = dynamic_cast<Automate*> (_parent);
     this->horizontalHeader()->setVisible(false);
     this->verticalHeader()->setVisible(false);
     this->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -96,26 +95,25 @@ Grid::Grid(int size, QWidget* parent) : QTableWidget(size, size, parent) {
     this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->resizeColumnsToContents();
     this->resizeRowsToContents();
-    modelBase = new Model();
     listCells = new Cell**[size];
     for (int i=0; i<size; i++){
         listCells[i] = new Cell*[size];
         for (int j=0; j<size; j++) {
             listCells[i][j] = new Cell(i,j);
             this->setItem(i,j,listCells[i][j]);
-            listCells[i][j]->setState(modelBase->getListStates()[0]);
-            listCells[i][j]->setBackground(QBrush(listCells[i][j]->getState()->getColor()));
+            listCells[i][j]->setState((parent->getLib()->getCurrentModel()->getListStates()[0]));
+            listCells[i][j]->setBackground(QBrush(parent->getLib()->getCurrentModel()->getListStates()[0]->getColor()));
         }
     }
-    QObject::connect(this,&Grid::cellClicked,this,&Grid::changeStateSurrounding);
+    QObject::connect(this,&Grid::cellClicked,this,&Grid::changeState);
 }
 
-void Grid::changeStateSurrounding(int row, int column){
+/*void Grid::changeStateSurrounding(int row, int column){
     int i = this->listCells[row][column]->getState()->getIndex();
     this->listCells[row][column]->setState(modelBase->getListStates()[(i+1)%modelBase->getNbState()]);
     this->listCells[row][column]->setBackground(QBrush(listCells[row][column]->getState()->getColor()));
     listCells[row][column]->setText(listCells[row][column]->getState()->getLabel()[0]);
-}
+}*/
 
 /*void Grid::deblockCells(){
 

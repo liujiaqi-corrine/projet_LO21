@@ -16,7 +16,6 @@ class Grid : public QTableWidget
         //int width;
         Cell*** listCells;
         Automate* parent;
-        Model* modelBase;
     public :
         //Grid(unsigned int _length = 0, unsigned int _width = 0);
         Grid(QWidget *parent) : QTableWidget(parent) {}
