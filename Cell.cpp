@@ -38,6 +38,6 @@ void Cell::setX(int _x){x = _x;}
 
 void Cell::setY(int _y){y = _y;}
 
-void Cell::setState(State* _state){state = _state; this->setText(state->getLabel()[0]);}
+void Cell::setState(State* _state){state = _state; this->setText(state->getLabel());}
 //void Cell::setState(State* _state){state = _state; this->setText(QString::number(state->getIndex()));}
 
