@@ -78,7 +78,7 @@ class Rule_Extension /*: public Rules*/ {
         Rule_Extension(/*QString _nom ,Model* _parent,*/ int nb) /*: Rules(_nom, _parent)*/ {configs = new std::vector<Config>[nb];}
         void addConfig(int etat, Config* conf) {configs[etat].push_back(*conf);}
         //std::vector<Config> getConfigs(int etat) {return configs[etat];}
-        std::vector<Config>* getConfigs() {return configs;}
+        std::vector<Config> getConfigs(int etat) {return configs[etat];}
 
 
 };

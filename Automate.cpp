@@ -176,9 +176,9 @@ void Automate::nextConfig(){
 
         for(int j=0; j<grille->columnCount(); j++){
             Rule_Extension* test = lib->getCurrentModel()->getRuleExtension();
-            std::vector<Config>* te = lib->getCurrentModel()->getRuleExtension()->getConfigs();
+            std::vector<Config> te = lib->getCurrentModel()->getRuleExtension()->getConfigs(0);
             bool verif2 = false; //si il a aucune config
-            for(int z=0; z< (int) lib->getCurrentModel()->getRuleExtension()->getConfigs()[grille->getlistCells()[i][j]->getState()->getIndex()].size(); z++){ //pour chaque config d'etat
+            for(int z=0; z< (int) lib->getCurrentModel()->getRuleExtension()->getConfigs(grille->getlistCells()[i][j]->getState()->getIndex()).size(); z++){ //pour chaque config d'etat
 
                 verif2 = true;
 
@@ -193,7 +193,7 @@ void Automate::nextConfig(){
 
                                 //Remplacer voisinage par config
                         if (lib->getCurrentModel()->getVoisinage()->getInteractable()[diametre*cptk+cptl]) //Le voisin n'est pas concerné
-                        if (lib->getCurrentModel()->getRuleExtension()->getConfigs()[grille->getlistCells()[i][j]->getState()->getIndex()].operator[](z).getEnvironment()[diametre*cptk+cptl] != grille->getlistCells()[k][l]->getState()->getIndex()){
+                        if (lib->getCurrentModel()->getRuleExtension()->getConfigs(grille->getlistCells()[i][j]->getState()->getIndex()).operator[](z).getEnvironment()[diametre*cptk+cptl] != grille->getlistCells()[k][l]->getState()->getIndex()){
                             verif2 = false;
                             break;
                         }
@@ -206,7 +206,7 @@ void Automate::nextConfig(){
 
                     } while (cptl<diametre);
                     if (verif2) {
-                        nextCells[i][j]->setState(lib->getCurrentModel()->getListStates()[lib->getCurrentModel()->getRuleExtension()->getConfigs()[grille->getlistCells()[i][j]->getState()->getIndex()].operator[](z).getSuivant()]);
+                        nextCells[i][j]->setState(lib->getCurrentModel()->getListStates()[lib->getCurrentModel()->getRuleExtension()->getConfigs(grille->getlistCells()[i][j]->getState()->getIndex()).operator[](z).getSuivant()]);
                         break;
                     }
                     k++;
