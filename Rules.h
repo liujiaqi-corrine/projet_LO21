@@ -27,6 +27,7 @@ class Rules {
     public:
         Rules(QString _nom ,Model* _parent) {nom = _nom; parent = _parent;}
         Model* getParent() const {return parent;}
+        virtual Rules*  getRue() = 0;
         virtual void setVoisins(int etat,int suivant, int comptant, int min, int max) = 0; //permet d'utiliser la bonne fonction des classes filles
         virtual std::vector<condition>* getConditions(int etat,int suivant) = 0;
         //virtual std::vector<Config> getConfigs(int etat) = 0;
@@ -64,6 +65,7 @@ class Rule_Intension : public Rules {
         //virtual void setVoisins(int etat,int indice, int min, int max) {state_rules[etat][indice].min.push_back(min); state_rules[etat][indice].max.push_back(max);}
         virtual void setVoisins(int etat,int suivant, int comptant, int _min, int _max){ condition cond = {comptant, _min, _max};states_rules[etat][suivant]->push_back(cond);}
         virtual std::vector<condition>* getConditions(int etat,int suivant) {return states_rules[etat][suivant];}
+        Rule_Intension*  getRue() {return this;}
 
 };
 
@@ -74,8 +76,9 @@ class Rule_Extension /*: public Rules*/ {
 
     public:
         Rule_Extension(/*QString _nom ,Model* _parent,*/ int nb) /*: Rules(_nom, _parent)*/ {configs = new std::vector<Config>[nb];}
-        void addConfig(int etat, Config conf) {configs[etat].push_back(conf);}
-        std::vector<Config> getConfigs(int etat) {return configs[etat];}
+        void addConfig(int etat, Config* conf) {configs[etat].push_back(*conf);}
+        //std::vector<Config> getConfigs(int etat) {return configs[etat];}
+        std::vector<Config>* getConfigs() {return configs;}
 
 
 };

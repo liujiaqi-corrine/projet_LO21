@@ -28,7 +28,6 @@ class Config {
 
         };
 
-    public slots:
         //void setEnvironment(int _x, int _y, int _index) {environment[diametre*_x+_y]= _index;}
         void setEnvironment(int _x, int _y, int _index) {environment[diametre*_x+_y]= _index;}
         //void setEnvironment(Cell *item) {environment[diametre*item->getX()+item->getY()]= item->getState()->getIndex();}

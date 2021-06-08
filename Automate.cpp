@@ -51,9 +51,10 @@ void Automate::drawInterface(){
     QObject::connect(b_library,&QPushButton::clicked,this,&Automate::chooseModel);
     QObject::connect(b_voisinage,&QPushButton::clicked,this,&Automate::displaySurrounding);
     QObject::connect(b_rules,&QPushButton::clicked,this,&Automate::chooseRules);
-    QObject::connect(b_next,&QPushButton::clicked,this,&Automate::run);
+    //QObject::connect(b_next,&QPushButton::clicked,this,&Automate::run);
+    QObject::connect(b_next,&QPushButton::clicked,this,&Automate::nextConfig);
     QObject::connect(b_reset,&QPushButton::clicked,this,&Automate::reset);
-    QObject::connect(b_config,&QPushButton::clicked,this,&Automate::defineConfig);
+    QObject::connect(b_config,&QPushButton::clicked,this,&Automate::drawConfig);
 
 }
 
@@ -63,7 +64,7 @@ void Automate::run(){
     if (ran <  b_run->value()){
        QTimer::singleShot(1000, this, &Automate::run);
        b_number->setDisabled(true);
-       next();
+       nextIntension();
     } else {
         b_number->setDisabled(false);
         ran = 0;
@@ -72,7 +73,7 @@ void Automate::run(){
 
 }
 
-void Automate::next(){
+void Automate::nextIntension(){
 
     qDebug("Lunchinh of next()");
     total_ran++;
@@ -170,51 +171,57 @@ void Automate::nextConfig(){
     int rayon = lib->getCurrentModel()->getVoisinage()->getDiametre()/2;
     int diametre = lib->getCurrentModel()->getVoisinage()->getDiametre();
 
-    //Calcul //Modulo retourne un negatif si on entre un négatif
+    //Calcul //Attention :Modulo retourne un negatif si on entre un négatif
     for (int i=0; i<grille->rowCount(); i++){ //pour chaque cellule de la grille
 
         for(int j=0; j<grille->columnCount(); j++){
-            bool verif = true;
+            Rule_Extension* test = lib->getCurrentModel()->getRuleExtension();
+            std::vector<Config>* te = lib->getCurrentModel()->getRuleExtension()->getConfigs();
+            bool verif2 = false; //si il a aucune config
+            for(int z=0; z< (int) lib->getCurrentModel()->getRuleExtension()->getConfigs()[grille->getlistCells()[i][j]->getState()->getIndex()].size(); z++){ //pour chaque config d'etat
 
-            for(int z=0; z< (int) lib->getCurrentModel()->getRuleExtension()->getConfigs(grille->getlistCells()[i][j]->getState()->getIndex()).size(); z++){
-
-                verif = true;
+                verif2 = true;
 
                 // On verifie pour tous les voisins si les positions correspondent à la configuration
                 int k=((grille->rowCount() + ((i-rayon) % grille->rowCount())) % grille->rowCount());
                 int cptk = 0;
                 do
-                {
+                { //pour chaque voisin
                     int cptl =0;
                     int l=((grille->columnCount() + ((j-rayon) % grille->columnCount())) % grille->columnCount());
                     do{
 
                                 //Remplacer voisinage par config
-                        if (lib->getCurrentModel()->getRuleExtension()->getConfigs(grille->getlistCells()[i][j]->getState()->getIndex()).operator[](z).getEnvironment()[diametre*k+l] == -1) continue; //Le voisin n'est pas concerné
-                        if (lib->getCurrentModel()->getVoisinage()->getInteractable()[diametre*cptk+cptl] != grille->getlistCells()[k][j]->getState()->getIndex()){
-                            verif = false;
+                        if (lib->getCurrentModel()->getVoisinage()->getInteractable()[diametre*cptk+cptl]) //Le voisin n'est pas concerné
+                        if (lib->getCurrentModel()->getRuleExtension()->getConfigs()[grille->getlistCells()[i][j]->getState()->getIndex()].operator[](z).getEnvironment()[diametre*cptk+cptl] != grille->getlistCells()[k][l]->getState()->getIndex()){
+                            verif2 = false;
                             break;
                         }
 
-                        if (!verif) break;
+                        if (!verif2) break;
 
                         l++;
                         l = l%grille->columnCount();
                         cptl++;
 
                     } while (cptl<diametre);
+                    if (verif2) {
+                        nextCells[i][j]->setState(lib->getCurrentModel()->getListStates()[lib->getCurrentModel()->getRuleExtension()->getConfigs()[grille->getlistCells()[i][j]->getState()->getIndex()].operator[](z).getSuivant()]);
+                        break;
+                    }
                     k++;
                     k = k%grille->rowCount();
                     cptk++;
                 } while (cptk<diametre);
 
-                if (verif) nextCells[i][j]->setState(lib->getCurrentModel()->getListStates()[lib->getCurrentModel()->getRuleExtension()->getConfigs(grille->getlistCells()[i][j]->getState()->getIndex()).operator[](z).getSuivant()]);
+            }
+
+            if (!verif2) nextCells[i][j]->setState(grille->getlistCells()[i][j]->getState());
         }
-            if (!verif) {nextCells[i][j]->setState(grille->getlistCells()[i][j]->getState());
-    }}
+    }
 
-
-}}
+    grille->updateGrid(nextCells);
+}
 
 void Automate::addConfig(){
 
@@ -625,15 +632,60 @@ void Automate::defineSurrounding(){
 
 }
 
+void Automate::drawConfig(){
+
+    QGroupBox* texte = new QGroupBox("se transformera en cellule central");
+    QPushButton *valider = new QPushButton("Valider");
+    QPushButton *annuler = new QPushButton("Annuler");
+
+    list = new QComboBox;
+    for (int i=0; i<lib->getCurrentModel()->getNbState();i++) list->addItem(lib->getCurrentModel()->getListStates()[i]->getLabel());
+
+
+    voisins = new Grid(lib->getCurrentModel()->getVoisinage()->getDiametre(),this);
+
+    QHBoxLayout *boutons = new QHBoxLayout;
+        boutons->addWidget(annuler);
+        boutons->addWidget(valider);
+
+
+   QVBoxLayout *vertical = new QVBoxLayout;
+      vertical->addWidget(list);
+      vertical->addWidget(texte);
+      vertical->addWidget(voisins);
+      vertical->addLayout(boutons);
+
+   infos = new QDialog(this);
+       infos->setWindowTitle("Définition d'une ");
+       infos->setModal(true);
+       infos->setLayout(vertical);
+       infos->show();
+
+   QObject::connect(valider,&QPushButton::clicked,infos,&QDialog::close);
+   QObject::connect(valider,&QPushButton::clicked,this,&Automate::validateSurrounding);
+   QObject::connect(annuler,&QPushButton::clicked,infos,&QDialog::close);
+}
+
+void Automate::validateConfig(){
+
+    if (!(lib->getCurrentModel()->getRuleExtension()))
+        lib->getCurrentModel()->setRuleExtension(new Rule_Extension(lib->getCurrentModel()->getNbState()));
+
+    Config* conf = new Config(lib->getCurrentModel()->getVoisinage()->getDiametre(), list->currentIndex());
+
+    for (int i=0; i<nb->value()*2-1; i++)
+        for (int j=0; j<nb->value()*2-1; j++)
+            conf->setEnvironment(i,j,voisins->getlistCells()[i][j]->getState()->getIndex());
+
+    lib->getCurrentModel()->getRuleExtension()->addConfig(list->currentIndex(),conf);
+}
+
 void Automate::drawSurrounding(){
-
-
-    lib->getListModels()[lib->getListModels().size()-1]->setVoisinage(nb->value()*2-1);
 
     QGroupBox* texte = new QGroupBox("Definissez le voisinage de la cellule centrale :");
     QPushButton *valider = new QPushButton("Valider");
 
-    Grid* voisins = new Grid(nb->value()*2-1,texte);
+    /*Grid**/ voisins = new Grid(nb->value()*2-1,this);
     //voisins->setModele(new Model());
     //voisins->item(nb->value()/2+1, nb->value()/2+1)->setBackground(QBrush(QColor(Qt::black)));
 
@@ -652,12 +704,21 @@ void Automate::drawSurrounding(){
        infos->show();
 
    QObject::connect(valider,&QPushButton::clicked,infos,&QDialog::close);
-   QObject::connect(valider,&QPushButton::clicked,this,&Automate::defineRules);
-   QObject::connect(voisins,&Grid::cellClicked,lib->getListModels()[lib->getListModels().size()-1]->getVoisinage(),&Surrounding::setInteractable);
-   //QObject::connect(voisins,&Grid::cellClicked,this,&Automate::displaySurrounding);
+   //QObject::connect(valider,&QPushButton::clicked,this,&Automate::defineRules);
+   //QObject::connect(voisins,&Grid::cellClicked,this,&Automate::cellToStateMethod);
+   //QObject::connect(this,&Automate::cellToState,lib->getCurrentModel()->getVoisinage(),&Surrounding::setInteractable);
    QObject::connect(valider,&QPushButton::clicked,this,&Automate::chooseModel);
+   QObject::connect(valider,&QPushButton::clicked,this,&Automate::validateSurrounding);
    //QObject::connect(valider,&QPushButton::clicked,this,&Automate::liberateDialog);
+}
 
+void Automate::validateSurrounding(){
+
+    lib->getCurrentModel()->setVoisinage(lib->getCurrentModel()->getVoisinage()->getDiametre());
+
+    for (int i=0; i<lib->getCurrentModel()->getVoisinage()->getDiametre(); i++)
+        for (int j=0; j<lib->getCurrentModel()->getVoisinage()->getDiametre(); j++)
+            lib->getCurrentModel()->getVoisinage()->setInteractable(i,j,voisins->getlistCells()[i][j]->getState()->getIndex());
 }
 
 void Automate::displaySurrounding(){
@@ -666,11 +727,11 @@ void Automate::displaySurrounding(){
 
     //Grid* voisins = new Grid(grille->getParent()->getLib()->getCurrentModel()->getVoisinage()->getDiametre(),grille->getParent()->getLib()->getCurrentModel()->getVoisinage()->getDiametre(),this);
     //voisins->setModele(new Model());
-    Grid* voisins = new Grid(grille->getParent()->getLib()->getCurrentModel()->getVoisinage()->getDiametre(),this);
+    Grid* voisins = new Grid(lib->getCurrentModel()->getVoisinage()->getDiametre(),this);
     for (int i=0; i<voisins->rowCount(); i++){
         for (int j=0; j<voisins->columnCount(); j++){
-            if (grille->getParent()->getLib()->getCurrentModel()->getVoisinage()->getInteractable()[voisins->rowCount()*i+j] == true )
-                voisins->getlistCells()[i][j]->setBackground(QBrush(QColor(Qt::black)));
+                qDebug("%d",lib->getCurrentModel()->getVoisinage()->getInteractable()[lib->getCurrentModel()->getVoisinage()->getDiametre()*i+j]);
+                voisins->getlistCells()[i][j]->setBackground(QBrush(lib->getCurrentModel()->getListStates()[lib->getCurrentModel()->getVoisinage()->getInteractable()[lib->getCurrentModel()->getVoisinage()->getDiametre()*i+j]]->getColor()));
         }
     }
 
@@ -691,7 +752,12 @@ void Automate::displaySurrounding(){
 
 }
 
+void Automate::cellToStateMethod(int row, int column){
 
+    //Necessite verificate pour savoir si il envoie la cellule modifie pour la cellule initial
+    emit cellToState(row,column,grille->getlistCells()[row][column]->getState()->getIndex()%lib->getCurrentModel()->getNbState());
+
+}
 
 
 

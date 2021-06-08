@@ -32,7 +32,7 @@ Model* Library::createLifeGame(){
     lifeGame->setVoisinage(3);
     for (int i=0; i<3; i++)
         for (int j=0; j<3; j++)
-            if (!(i==1 && j==1)) lifeGame->getVoisinage()->setInteractable(i,j);
+            if (!(i==1 && j==1)) lifeGame->getVoisinage()->setInteractable(i,j,1);
 
     //Definition Regles
     lifeGame->setRule(new Rule_Intension("Regles LifeGame",lifeGame,2));
@@ -56,10 +56,10 @@ Model* Library::createBrianSBrain(){
 
     //Definition du voisinage
     briansbrain->setVoisinage(3);
-    briansbrain->getVoisinage()->setInteractable(0,1); //Nord
-    briansbrain->getVoisinage()->setInteractable(1,0); //Ouest
-    briansbrain->getVoisinage()->setInteractable(1,2); //Est
-    briansbrain->getVoisinage()->setInteractable(2,1); //Sud
+    briansbrain->getVoisinage()->setInteractable(0,1,1); //Nord
+    briansbrain->getVoisinage()->setInteractable(1,0,1); //Ouest
+    briansbrain->getVoisinage()->setInteractable(1,2,1); //Est
+    briansbrain->getVoisinage()->setInteractable(2,1,1); //Sud
 
     //Definition Regles
 

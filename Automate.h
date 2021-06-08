@@ -17,6 +17,9 @@ class Rules;
 
 class Automate : public QWidget
 {
+    //Macro obligatoire car signaux (et slots) personalisé
+    Q_OBJECT
+
     public:
     Automate();
         //virtual Automate* parent() {return this;}
@@ -52,6 +55,7 @@ class Automate : public QWidget
         QComboBox *list;
         QRadioButton *r_intension;
         QRadioButton *r_extension;
+        Grid* voisins;
 
 
     private slots :
@@ -67,13 +71,20 @@ class Automate : public QWidget
         void chooseRules();
         void defineRules();
         void defineRulesStates();
-        void next();
+        void nextIntension();
         void run();
         void reset();
         void nextConfig();
         void addConfig();
         void defineConfig();
+        void drawConfig();
+        void validateSurrounding();
+        void validateConfig();
+        void cellToStateMethod(int row, int column);
         //void setEntourage(int row, int column);
+
+    signals:
+        void cellToState(int row, int columnn, int index);
 };
 
 
