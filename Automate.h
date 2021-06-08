@@ -72,21 +72,19 @@ class Automate : public QWidget
         void chooseRules();
         void defineRules();
         void defineRulesStates();
-        void nextIntension();
+        //void nextIntension();
+        State* nextIntension(int i, int j);
         void run();
         void reset();
-        void nextConfig();
+        //void nextConfig();
+        State* nextConfig(int i, int j);
         void addConfig();
         void defineConfig();
-<<<<<<< HEAD
         void generateRandomGrid();
-=======
         void drawConfig();
         void validateSurrounding();
         void validateConfig();
         void cellToStateMethod(int row, int column);
->>>>>>> extension
-        //void setEntourage(int row, int column);
 
     signals:
         void cellToState(int row, int columnn, int index);

@@ -69,25 +69,41 @@ void Automate::drawInterface(){
     QObject::connect(b_library,&QPushButton::clicked,this,&Automate::chooseModel);
     QObject::connect(b_voisinage,&QPushButton::clicked,this,&Automate::displaySurrounding);
     QObject::connect(b_rules,&QPushButton::clicked,this,&Automate::chooseRules);
-    //QObject::connect(b_next,&QPushButton::clicked,this,&Automate::run);
-    QObject::connect(b_next,&QPushButton::clicked,this,&Automate::nextConfig);
+    QObject::connect(b_next,&QPushButton::clicked,this,&Automate::run);
     QObject::connect(b_reset,&QPushButton::clicked,this,&Automate::reset);
-<<<<<<< HEAD
-    QObject::connect(b_config,&QPushButton::clicked,this,&Automate::defineConfig);
-    QObject::connect(b_random,&QPushButton::clicked,this,&Automate::generateRandomGrid);
-=======
     QObject::connect(b_config,&QPushButton::clicked,this,&Automate::drawConfig);
->>>>>>> extension
+    QObject::connect(b_random,&QPushButton::clicked,this,&Automate::generateRandomGrid);
+
 
 }
 
 
 void Automate::run(){
-
     if (ran <  b_run->value()){
-       QTimer::singleShot(1000, this, &Automate::run);
        b_number->setDisabled(true);
-       nextIntension();
+       qDebug("run");
+       total_ran++;
+       b_number->display(total_ran);
+       ran++;
+       //Allocation Memoire
+       Cell*** nextCells = new Cell**[grille->rowCount()];  //on garce Cell*** pour rester coherant avec grid.h
+       for (int i=0; i<grille->rowCount(); i++){
+           nextCells[i] = new Cell*[grille->columnCount()];
+           for (int j=0; j<grille->columnCount(); j++)
+               nextCells[i][j] = new Cell(i,j); // New Cells pour l'history
+       }
+
+       State* state = nullptr;
+       for (int i=0; i<grille->rowCount(); i++){ //pour chaque cellule de la grille
+           for(int j=0; j<grille->columnCount(); j++){
+               if ((state = nextIntension(i,j))) nextCells[i][j]->setState(state);
+                else if ((state = nextConfig(i,j))) nextCells[i][j]->setState(state);
+                        else nextCells[i][j]->setState(grille->getlistCells()[i][j]->getState());
+           }
+       }
+
+       grille->updateGrid(nextCells);
+       QTimer::singleShot(1000, this, &Automate::run);
     } else {
         b_number->setDisabled(false);
         ran = 0;
@@ -96,10 +112,10 @@ void Automate::run(){
 
 }
 
-void Automate::nextIntension(){
+State* Automate::nextIntension(int i, int j){
 
     qDebug("Lunchinh of next()");
-    total_ran++;
+    /*total_ran++;
     b_number->display(total_ran);
     ran++;
     //Allocation memoire
@@ -108,16 +124,16 @@ void Automate::nextIntension(){
         nextCells[i] = new Cell*[grille->columnCount()];
         for (int j=0; j<grille->columnCount(); j++)
             nextCells[i][j] = new Cell(i,j); // New Cells pour l'history
-    }
-
+    }*/
+    qDebug("nextIntension");
     int rayon = lib->getCurrentModel()->getVoisinage()->getDiametre()/2;
     int diametre = lib->getCurrentModel()->getVoisinage()->getDiametre();
     int* compteur = new int[lib->getCurrentModel()->getNbState()];
 
     //Calcul //Modulo retourne un negatif si on entre un négatif
-    for (int i=0; i<grille->rowCount(); i++){ //pour chaque cellule de la grille
+    //for (int i=0; i<grille->rowCount(); i++){ //pour chaque cellule de la grille
 
-        for(int j=0; j<grille->columnCount(); j++){
+        //for(int j=0; j<grille->columnCount(); j++){
 
             //Remise à 0 du compteur
             for(int y=0; y<lib->getCurrentModel()->getNbState(); y++) compteur[y]=0;
@@ -164,7 +180,8 @@ void Automate::nextIntension(){
                     //qDebug("        %d : %d",lib->getCurrentModel()->getRule()->getConditions(grille->getlistCells()[i][j]->getState()->getIndex(),z)->operator[](a).index_comptant,compteur[lib->getCurrentModel()->getRule()->getConditions(grille->getlistCells()[i][j]->getState()->getIndex(),z)->operator[](a).index_comptant]);
                     if (compteur[lib->getCurrentModel()->getRule()->getConditions(grille->getlistCells()[i][j]->getState()->getIndex(),z)->operator[](a).index_comptant] <= lib->getCurrentModel()->getRule()->getConditions(grille->getlistCells()[i][j]->getState()->getIndex(),z)->operator[](a).max)
                     if (compteur[lib->getCurrentModel()->getRule()->getConditions(grille->getlistCells()[i][j]->getState()->getIndex(),z)->operator[](a).index_comptant] >= lib->getCurrentModel()->getRule()->getConditions(grille->getlistCells()[i][j]->getState()->getIndex(),z)->operator[](a).min)
-                    {   nextCells[i][j]->setState(lib->getCurrentModel()->getListStates()[z]);
+                    {   //nextCells[i][j]->setState(lib->getCurrentModel()->getListStates()[z]);
+                        return lib->getCurrentModel()->getListStates()[z];
                         verif = true;
                         //qDebug("changement %d:%d",i,j);
                         break;}
@@ -172,31 +189,33 @@ void Automate::nextIntension(){
                 }
                 if (verif) break;
             }
-            if (!verif) {nextCells[i][j]->setState(grille->getlistCells()[i][j]->getState()); /*qDebug("conservation %d:%d",i,j);*/}
-        }
-    }
+            if (!verif) {//nextCells[i][j]->setState(grille->getlistCells()[i][j]->getState());
+                        return nullptr;
+                        /*qDebug("conservation %d:%d",i,j);*/}
+        //}
+    //}
 
-    grille->updateGrid(nextCells);
+    //grille->updateGrid(nextCells);
 
 }
 
-void Automate::nextConfig(){
+State* Automate::nextConfig(int i, int j){
 
-
-    //Allocation memoire
+    if (lib->getCurrentModel()->getRuleExtension()==nullptr) return nullptr;
+    /*//Allocation memoire
     Cell*** nextCells = new Cell**[grille->rowCount()];  //on garce Cell*** pour rester coherant avec grid.h
     for (int i=0; i<grille->rowCount(); i++){
         nextCells[i] = new Cell*[grille->columnCount()];
         for (int j=0; j<grille->columnCount(); j++)
             nextCells[i][j] = new Cell(i,j); // New Cells pour l'history
-    }
-
+    }*/
+    qDebug("nextConfig");
     int rayon = lib->getCurrentModel()->getVoisinage()->getDiametre()/2;
     int diametre = lib->getCurrentModel()->getVoisinage()->getDiametre();
 
     //Calcul //Attention :Modulo retourne un negatif si on entre un négatif
-    for (int i=0; i<grille->rowCount(); i++){ //pour chaque cellule de la grille
-        for(int j=0; j<grille->columnCount(); j++){
+    /*for (int i=0; i<grille->rowCount(); i++){ //pour chaque cellule de la grille
+        for(int j=0; j<grille->columnCount(); j++){*/
 
             bool verif2 = false; //si il a aucune config
             qDebug("%d-%d -> z %d",i,j,(int) lib->getCurrentModel()->getRuleExtension()->getConfigs(grille->getlistCells()[i][j]->getState()->getIndex()).size());
@@ -234,18 +253,20 @@ void Automate::nextConfig(){
                 } while (cptk<diametre);
                 if (verif2) { // si tous les voisins correspondent à la config
                     qDebug("%d-%d en %d premier ",i,j,lib->getCurrentModel()->getRuleExtension()->getConfigs(grille->getlistCells()[i][j]->getState()->getIndex()).operator[](z).getCentral());
-                    nextCells[i][j]->setState(lib->getCurrentModel()->getListStates()[lib->getCurrentModel()->getRuleExtension()->getConfigs(grille->getlistCells()[i][j]->getState()->getIndex()).operator[](z).getCentral()]);
+                    //nextCells[i][j]->setState(lib->getCurrentModel()->getListStates()[lib->getCurrentModel()->getRuleExtension()->getConfigs(grille->getlistCells()[i][j]->getState()->getIndex()).operator[](z).getCentral()]);
+                    return lib->getCurrentModel()->getListStates()[lib->getCurrentModel()->getRuleExtension()->getConfigs(grille->getlistCells()[i][j]->getState()->getIndex()).operator[](z).getCentral()];
                     //break;
-                } else // si la config ne correspondant pas et que c'est la derniere
+                } /*else // si la config ne correspondant pas et que c'est la derniere
                 if (z < (int) lib->getCurrentModel()->getRuleExtension()->getConfigs(grille->getlistCells()[i][j]->getState()->getIndex()).size()) {nextCells[i][j]->setState(grille->getlistCells()[i][j]->getState());
-                    qDebug("%d-%d en %d second",i,j,grille->getlistCells()[i][j]->getState()->getIndex());}
+                    qDebug("%d-%d en %d second",i,j,grille->getlistCells()[i][j]->getState()->getIndex());}*/
 
             }
-            if (!verif2) {nextCells[i][j]->setState(grille->getlistCells()[i][j]->getState());qDebug("%d-%d en %d tres",i,j,grille->getlistCells()[i][j]->getState()->getIndex());}
-        }
-    }
+            if (!verif2) {/*nextCells[i][j]->setState(grille->getlistCells()[i][j]->getState());qDebug("%d-%d en %d tres",i,j,grille->getlistCells()[i][j]->getState()->getIndex());*/
+                            return nullptr;}
+        //}
+    //}
 
-    grille->updateGrid(nextCells);
+    //grille->updateGrid(nextCells);
 }
 
 void Automate::addConfig(){
