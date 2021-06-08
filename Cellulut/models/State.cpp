@@ -1,7 +1,7 @@
 #include "main.h"
 #include "models/State.h"
 
-State::State(unsigned int _index, string _color, string _label): index(_index), color(_color), label(_label){}
+State::State(unsigned int _index, string _label, string _color): index(_index), label(_label), color(_color){}
 
 
 unsigned int State::getIndex() const{return this->index;}
@@ -10,8 +10,6 @@ string State::getColor() const{return this->color;}
 
 string State::getLabel() const{return this->label;}
 
-
-void State::setIndex(unsigned int _index){this->index=_index;}
 
 void State::setColor(string _color){this->color = _color;}
 

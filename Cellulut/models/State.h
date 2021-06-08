@@ -7,19 +7,18 @@ class State
 {
 protected :
     unsigned int index;
-    string color;
     string label;
+    string color;
 public :
-    State(unsigned int index = 0,  string color = "",  string label = "");
+    State(unsigned int index = 0,  string _label = "",  string _color = "");
     ~State() = default;
 
     unsigned int getIndex() const;
-    string getColor() const;
     string getLabel() const;
+    string getColor() const;
 
-    void setIndex(unsigned int _index);
-    void setColor(string _color);
     void setLabel(string _label);
+    void setColor(string _color);
 
     QString getColorAsQString() const;
     QString getLabelAsQString() const;

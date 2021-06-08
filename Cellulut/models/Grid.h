@@ -4,23 +4,25 @@
 #include "main.h"
 #include "models/Cell.h"
 
-#include <QTableWidget>
-
-class Grid : public QTableWidget
+class Grid // Singleton
 {
     protected :
+        static Grid* singleton; // Pointer to singleton
+        Grid() = default; // Private constructor
+        unsigned int rows;
+        unsigned int columns;
         Cell** listCells;
     public :
-        Grid(int rows = 0,int columns = 0);
+        static Grid* getGrid() noexcept {return singleton;}
         ~Grid() = default;
 
-        //int rowCount() const; // Héritage
-        //int columnCount() const; // Héritage
+        unsigned int getRows() const;
+        unsigned int getColumns() const; // Héritage
         Cell** getlistCells() const;
 
+        void setRows(unsigned int _rows);
+        void setColumns(unsigned int _columns);
         void setlistCells(Cell** _listCells);
-        //void setRowCount(int rows); // Héritage
-        //void setColumnCount(int columns); // Héritage
 };
 
 

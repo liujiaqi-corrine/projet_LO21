@@ -12,10 +12,12 @@ void Library::add_Model(Model* new_model)
         if(listModels->at(i) == new_model)
         {
             //throw invalid_argument("This model already exists \n");
+            cout<<"This model already exists"<<endl;
+            return;
         }
     }
     this->listModels->push_back(new_model);
-    //cout<<"Model added"<<endl;
+    cout<<"Model added"<<endl;
     return;
 }
 
@@ -28,7 +30,7 @@ Model* Library::get_Model(unsigned int model_id)
             return listModels->at(i);
         }
     }
-    //cout<<"This model doesn't exists"
+    cout<<"This model doesn't exists";
     return nullptr;
 }
 
@@ -39,10 +41,10 @@ void Library::del_Model(Model* _model)
         if(listModels->at(i) == _model)
         {
             listModels->erase(listModels->begin()+i);
-            //cout<<"Model deleted"<<endl;
+            cout<<"Model deleted"<<endl;
             return;
         }
     }
-    //cout<<"This model doesn't exists"
+    cout<<"This model doesn't exists";
     return;
 }
