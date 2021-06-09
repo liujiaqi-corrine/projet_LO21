@@ -47,7 +47,6 @@ class Automate : public QWidget
         QPushButton *b_start;
         QPushButton *b_stop;
         volatile bool strt;
-        QTimer* myTimer;
 
     //Boite de Dialogue
         QDialog* infos;

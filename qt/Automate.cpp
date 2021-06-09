@@ -22,17 +22,12 @@ Automate::Automate() : QWidget()
     b_config = new QPushButton("Ajouter Config");
     b_random = new QPushButton("Grille aléatoire");
 
-    b_start = new QPushButton("start",this);
-    b_stop = new QPushButton("stop",this);
+    b_start = new QPushButton("commence",this);
+    b_stop = new QPushButton("arrête",this);
 
     lib = new Library;
     grille = new Grid(5,5,this);
 
-    myTimer=new QTimer(this);
-    myTimer->setInterval(500);
-    myTimer->setSingleShot(false);
-    connect(myTimer,SIGNAL(timeout()),this,SLOT(timerslot()));
-    myTimer->start();
 
     drawInterface();
 
@@ -70,12 +65,18 @@ void Automate::drawInterface(){
         principal->addWidget(b_config);
         principal->addWidget(b_reset);
         principal->addLayout(run);
-        principal->addWidget(b_number);
-        principal->addWidget(b_random);
-        principal->addWidget(grille);
 
         principal->addWidget(b_start);
         principal->addWidget(b_stop);
+
+        principal->addWidget(b_number);
+        principal->addWidget(b_random);
+
+
+
+
+        principal->addWidget(grille);
+
 
     setLayout(principal);
 
