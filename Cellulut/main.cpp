@@ -1,27 +1,18 @@
+#include "main.h"
 #include <QApplication>
+#include "controllers/C_MainWindow.h"
 
-#include "Cell.h"
-#include "Grid.h"
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
+    QApplication app(argc, argv);
 
-    QWidget fenetre;
-    fenetre.setMinimumSize(600,600);
+    // Instantiate main window controller and display view
+    C_MainWindow *mainWindowController = new C_MainWindow(&app);
+    mainWindowController->init();
 
-    Grid *grille = new Grid(10,10,&fenetre); //pourquoi il faut la lier à la fenetre pour l'afficher en plus du layout?
+    // Show the view
+    mainWindowController->getView()->show();
 
-    QPushButton *modele = new QPushButton;
-    modele->setText("Modele");
-
-    QVBoxLayout *principal = new QVBoxLayout;
-    principal->addWidget(modele);
-    principal->addWidget(grille);
-
-    fenetre.setLayout(principal);
-
-    fenetre.show();
-
-    return a.exec();
+    return app.exec();
 }

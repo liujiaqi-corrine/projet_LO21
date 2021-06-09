@@ -1,19 +1,19 @@
-#ifndef CELL_H_INCLUDED
-#define CELL_H_INCLUDED
+#ifndef CELL_H
+#define CELL_H
 
-#include "State.h"
-#include <QTableWidgetItem>
+#include "main.h"
+#include "models/State.h"
 
-class Cell : public QTableWidgetItem
+class Cell
 {
     protected :
         int x;
         int y;
         State* state;
     public :
-
-        Cell(int type = Type) ;
+        Cell() = default;
         ~Cell() = default;
+        Cell(int X, int Y): x(X), y(Y), state(nullptr){};
 
         int getX() const;
         int getY() const;
@@ -22,10 +22,7 @@ class Cell : public QTableWidgetItem
         void setX(int _x);
         void setY(int _y);
         void setState(State* _state);
-
-    signals:
-        void clicked();
-
 };
 
-#endif // CELL_H_INCLUDED
+
+#endif // CELL_H

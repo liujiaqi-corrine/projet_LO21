@@ -1,20 +1,15 @@
-#ifndef MAIN_H_INCLUDED
-#define MAIN_H_INCLUDED
-
-#include<iostream>
-#include<string>
-#include<vector>
+#ifndef MAIN
+#define MAIN
 
 #define MAX_STATE 8
 
 using namespace std;
 
-#include "State.h"
-#include "Cell.h"
-#include "Grid.h"
-#include "Surrounding.h"
-#include "Rule.h"
-#include "Model.h"
-#include "Library.h"
+#include <string>
+#include <iostream>
+#include <sstream>
+#include <vector>
+#include <typeinfo>
+#include <QDebug>
 
-#endif // MAIN_H_INCLUDED
+#endif // MAIN
