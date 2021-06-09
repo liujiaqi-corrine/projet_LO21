@@ -2,7 +2,8 @@ QT += widgets
 QT += core gui sql
 
 SOURCES += \
-    controllers/C_MainWindow.cpp \
+    data/DataEngine.cpp \
+    data/interfaces/InsideDataForUI.cpp \
     main.cpp \
     models/Automate.cpp \
     models/Cell.cpp \
@@ -16,11 +17,19 @@ SOURCES += \
     models/managers/DatabaseManager.cpp \
     models/managers/ModelsManager.cpp \
     models/managers/StatesManager.cpp \
-    views/V_MainWindow.cpp \
-    views/V_SimulationConfigurationWidget.cpp
+    ui/UIEngine.cpp \
+    ui/interfaces/InsideUIForData.cpp \
+    ui/views/MainMenuView.cpp \
+    ui/views/MainWindow.cpp \
+    ui/views/SimulationView.cpp \
+    ui/views/SimulationViewV2.cpp \
+    ui/views/grid/SimulationBoard.cpp \
+    ui/views/templates/CreateTemplateView.cpp \
+    ui/views/templates/LoadTemplateView.cpp
 
 HEADERS += \
-    controllers/C_MainWindow.h \
+    data/DataEngine.h \
+    data/interfaces/InsideDataForUI.h \
     main.h \
     models/Automate.h \
     models/Cell.h \
@@ -34,10 +43,21 @@ HEADERS += \
     models/managers/DatabaseManager.h \
     models/managers/ModelsManager.h \
     models/managers/StatesManager.h \
-    views/V_MainWindow.h \
-    views/V_SimulationConfigurationWidget.h
+    ui/UIEngine.h \
+    ui/interfaces/InsideUIForData.h \
+    ui/views/MainMenuView.h \
+    ui/views/MainWindow.h \
+    ui/views/SimulationView.h \
+    ui/views/SimulationViewV2.h \
+    ui/views/grid/SimulationBoard.h \
+    ui/views/templates/CreateTemplateView.h \
+    ui/views/templates/LoadTemplateView.h
 
 FORMS += \
-    views/v_mainwindow.ui \
-    views/v_simulationconfigurationwidget.ui
+    ui/views/MainMenuView.ui \
+    ui/views/MainWindow.ui \
+    ui/views/SimulationView.ui \
+    ui/views/templates/CreateTemplateView.ui \
+    ui/views/templates/LoadTemplateView.ui
+
 

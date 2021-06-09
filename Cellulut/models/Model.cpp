@@ -1,7 +1,7 @@
 #include "main.h"
 #include "models/Model.h"
 
-Model::Model(unsigned int _id, string _title, string _description, string _author, string _date) : id(_id), title(_title), description(_description), author(_author), date_creation(_date)
+Model::Model(unsigned int _id_model, string _title, string _description, string _author, string _date) : id_model(_id_model), title(_title), description(_description), author(_author), date_creation(_date)
 {
     this->listStates = new vector<State*>;
     State* default_state = new State(0,"default","grey");
@@ -13,7 +13,7 @@ Model::Model(unsigned int _id, string _title, string _description, string _autho
 }
 
 
-unsigned int Model::getId() const{return this->id;}
+unsigned int Model::getId_Model() const{return this->id_model;}
 
 string Model::getTitle() const{return this->title;}
 
@@ -73,6 +73,8 @@ void Model::add_State(State* new_state)
         if(listStates->at(i)->getIndex() == new_state->getIndex())
         {
             //throw invalid_argument("State index already exists, index : " + to_string(new_state->getIndex()));
+            cout<<"Model index already exists"<<endl;
+            return;
         }
     }
     this->listStates->push_back(new_state);

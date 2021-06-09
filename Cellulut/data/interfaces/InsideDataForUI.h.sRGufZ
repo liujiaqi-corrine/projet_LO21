@@ -1,0 +1,14 @@
+#ifndef INSIDEDATAFORUI_H
+#define INSIDEDATAFORUI_H
+
+#include "data/DataEngine.h"
+
+class InsideDataForUI
+{
+  private:
+    DataEngine *dataEngine;
+public:
+    InsideDataForUI(DataEngine *dataEngine);
+};
+
+#endif // INSIDEDATAFORUI_H

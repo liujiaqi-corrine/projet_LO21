@@ -1,10 +1,11 @@
 #include "main.h"
 #include "models/Surrounding.h"
+#include "models/Library.h"
 
-Surrounding::Surrounding(string _name, unsigned int _radius): name(_name), radius(_radius)
+Surrounding::Surrounding(unsigned int _id_surrounding, string _name, unsigned int _radius): id_surrounding(_id_surrounding), name(_name), radius(_radius)
 {
-    //this->interaction = new bool*[size];
-    this->interaction = new vector<bool>();
+    this->id_surrounding = Library::getLibrary()->getListSurroundings()->size();
+    this->interaction = new vector<bool>;
 }
 
 Surrounding::~Surrounding()
@@ -12,6 +13,7 @@ Surrounding::~Surrounding()
     delete[] this->interaction;
 }
 
+unsigned int Surrounding::getId_Surrounding() const{return this->id_surrounding;}
 
 string Surrounding::getName() const{return this->name;}
 

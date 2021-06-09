@@ -9,7 +9,7 @@
 class Model
 {
     protected :
-        unsigned int id;
+        unsigned int id_model;
         string title;
         string description;
         string author;
@@ -19,10 +19,10 @@ class Model
         vector<Rule_int*>* rule_int;
         vector<Rule_ext*>* rule_ext;
     public :
-        Model(unsigned int _id = 0, string _title = "", string _description = "", string _author = "", string _date ="");
+        Model(unsigned int _id_model = 0, string _title = "", string _description = "", string _author = "", string _date ="");
         ~Model() = default;
 
-        unsigned int getId() const;
+        unsigned int getId_Model() const;
         string getTitle() const;
         string getDescription() const;
         string getAuthor() const;

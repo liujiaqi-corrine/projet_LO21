@@ -17,7 +17,7 @@ class Grid // Singleton
         ~Grid() = default;
 
         unsigned int getRows() const;
-        unsigned int getColumns() const; // Héritage
+        unsigned int getColumns() const;
         Cell** getlistCells() const;
 
         void setRows(unsigned int _rows);
