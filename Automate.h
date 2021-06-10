@@ -85,6 +85,8 @@ class Automate : public QWidget
         void validateSurrounding();
         void validateConfig();
         void cellToStateMethod(int row, int column);
+        void chooseSurrounding();
+        void applySurrounding();
 
     signals:
         void cellToState(int row, int columnn, int index);

@@ -1,10 +1,10 @@
 #include "Surrounding.h"
 
-Surrounding::Surrounding(int _diametre) : QObject() {
+Surrounding::Surrounding(int _diametre, QString _name) : QObject() {
 
+    name = _name;
     diametre = _diametre;
-    nbVoisins = diametre*diametre;
-    interactable = new int[nbVoisins];
+    interactable = new int[diametre*diametre];
 
     //Initialisation du voisinage à : aucun voisin
     for (int i=0; i<diametre; i++)

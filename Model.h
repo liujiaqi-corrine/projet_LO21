@@ -31,7 +31,7 @@ class Model
         int getNbState() const;
 
 
-        void setVoisinage(int _diametre) {voisinage = new Surrounding(_diametre);}
+        void setVoisinage(Surrounding* _voisinage) {voisinage = _voisinage;}
         void setName(QString _name);
         void setRule(Rules* _rule) {rule = _rule;}
         void setRuleExtension(Rule_Extension* _rule) {if (!_rule) qDebug("this null Model.h");extension = _rule;}

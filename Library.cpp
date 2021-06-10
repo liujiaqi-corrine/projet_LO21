@@ -3,6 +3,9 @@
 
 Library::Library(){
 
+    //Creation Voisinages
+    listSurrounding.push_back(createSurroundingMoore());
+    listSurrounding.push_back(createSurroundingVonNeumann());
 
     //Creation Modele de base
     listModels.push_back(createLifeGame());
@@ -19,6 +22,11 @@ void Library::addModel(QString nom, int nb){
 
 }
 
+void Library::addSurrounding(int _diametre, QString _name){
+
+    listSurrounding.push_back(new Surrounding(_diametre, _name));
+}
+
 
 Model* Library::createLifeGame(){
 
@@ -29,10 +37,7 @@ Model* Library::createLifeGame(){
     lifeGame->getListStates()[1] = new State(1,QColor(Qt::white),"vivant");
 
     //Definition du voisinage
-    lifeGame->setVoisinage(3);
-    for (int i=0; i<3; i++)
-        for (int j=0; j<3; j++)
-            if (!(i==1 && j==1)) lifeGame->getVoisinage()->setInteractable(i,j,1);
+    lifeGame->setVoisinage(listSurrounding[0]);
 
     //Definition Regles
     lifeGame->setRule(new Rule_Intension("Regles LifeGame",lifeGame,2));
@@ -55,11 +60,7 @@ Model* Library::createBrianSBrain(){
     briansbrain->getListStates()[2] = new State(2,QColor(Qt::yellow),"refractaire");
 
     //Definition du voisinage
-    briansbrain->setVoisinage(3);
-    briansbrain->getVoisinage()->setInteractable(0,1,1); //Nord
-    briansbrain->getVoisinage()->setInteractable(1,0,1); //Ouest
-    briansbrain->getVoisinage()->setInteractable(1,2,1); //Est
-    briansbrain->getVoisinage()->setInteractable(2,1,1); //Sud
+    briansbrain->setVoisinage(listSurrounding[0]);
 
     //Definition Regles
     briansbrain->setRule(new Rule_Intension("Regles Brian's Brain",briansbrain,3));
@@ -70,3 +71,25 @@ Model* Library::createBrianSBrain(){
     return briansbrain;
 }
 
+Surrounding* Library::createSurroundingMoore(){
+
+    Surrounding* voisins = new Surrounding(3,"Moore");
+    for (int i=0; i<3; i++)
+        for (int j=0; j<3; j++)
+            if (!(i==1 && j==1)) voisins->setInteractable(i,j,1);
+
+    return voisins;
+
+}
+
+Surrounding* Library::createSurroundingVonNeumann(){
+
+    Surrounding* voisins = new Surrounding(3,"Von Neumann");
+
+    voisins->setInteractable(0,1,1); //Nord
+    voisins->setInteractable(1,0,1); //Ouest
+    voisins->setInteractable(1,2,1); //Est
+    voisins->setInteractable(2,1,1); //Sud
+
+    return voisins;
+}

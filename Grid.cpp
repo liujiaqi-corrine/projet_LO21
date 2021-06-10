@@ -5,9 +5,6 @@
 Grid::Grid(int rows, int columns, QWidget *_parent) : QTableWidget(rows, columns, _parent) {
 
     parent = (Automate*) _parent;
-
-    //length = rows;
-    //width = columns;
     this->horizontalHeader()->setVisible(false);
     this->verticalHeader()->setVisible(false);
     this->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -15,11 +12,6 @@ Grid::Grid(int rows, int columns, QWidget *_parent) : QTableWidget(rows, columns
     this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->resizeColumnsToContents();
     this->resizeRowsToContents();
-    //this->horizontalHeader()->setStretchLastSection(true);
-    //this->verticalHeader()->setStretchLastSection(true);
-
-    //Model* model = new Model();
-    //this->parent()->getLib()->getCurrentModel();
 
     listCells = new Cell**[rows];
     for (int i=0; i<rows; i++){

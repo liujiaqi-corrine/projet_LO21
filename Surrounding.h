@@ -7,14 +7,15 @@
 class Surrounding : public QObject
 {
     protected :
+        QString name;
         State* Model; // Voisinage d'un Model
         int diametre;
         int* interactable; //Pas de <vector> car on changera pas la taille
-        int nbVoisins;
 
     public :
-        Surrounding(int _diametre);
-        //~Surrounding(); // error :undefined reference to vtable for
+        Surrounding(int _diametre, QString name);
+        //~Surrounding(); // error :undefined reference to vtable for : à cause d'une methode virtuelle
+        QString getName() {return name;}
         int* getInteractable() const {return interactable;}
         void setInteractable(int row, int colomn, int index);
         void setNotInteractable(int row, int colomn, int index);
