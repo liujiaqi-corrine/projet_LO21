@@ -18,6 +18,7 @@ class Model
         int nbState;
         Rules* rule;
         Rule_Extension* extension;
+        //std::vector<Rules*> listRules;
     public :
         Model(QString _name, int _nbState);
         Model();

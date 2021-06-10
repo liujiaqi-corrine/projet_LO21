@@ -44,7 +44,7 @@ void Grid::changeState(int row, int column){
 
     this->listCells[row][column]->setBackground(QBrush(listCells[row][column]->getState()->getColor()));
 
-    listCells[row][column]->setText(listCells[row][column]->getState()->getLabel()[0]);
+    listCells[row][column]->setText(listCells[row][column]->getState()->getLabel());
     //listCells[row][column]->setText(QString::number(listCells[row][column]->getState()->getIndex()));
 
 }

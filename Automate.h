@@ -27,12 +27,14 @@ class Automate : public QWidget
 
     private:
         QPushButton *b_library;
+        QPushButton *b_surrounding;
         QPushButton *b_voisinage;
         QPushButton *b_rules;
         QPushButton *b_next;
         QPushButton *b_reset;
         QPushButton *b_config;
         QPushButton *b_random;
+        QPushButton *b_intension;
         QSpinBox *b_run;
         QLCDNumber* b_number;
         Grid* grille;
@@ -48,15 +50,14 @@ class Automate : public QWidget
         QSpinBox *nb;
         QSpinBox *nb1;
         int added;
-        int added_rules;
-        int added_states;
         QPushButton *color;
         QColor* couleur;
         QLineEdit *label;
-        QComboBox *list;
-        QRadioButton *r_intension;
-        QRadioButton *r_extension;
+        QComboBox* list;
+        QComboBox* list1;
+        QComboBox* list2;
         Grid* voisins;
+
 
 
     private slots :
@@ -68,18 +69,12 @@ class Automate : public QWidget
         void displaySurrounding();
         void chooseModel();
         void applyModel();
-        ///void liberateDialog();
-        void chooseRules();
-        void defineRules();
-        void defineRulesStates();
-        //void nextIntension();
+        ///void liberateMemoryDialog();
+        void defineRuleIntension();
         State* nextIntension(int i, int j);
         void run();
         void reset();
-        //void nextConfig();
         State* nextConfig(int i, int j);
-        void addConfig();
-        void defineConfig();
         void generateRandomGrid();
         void drawConfig();
         void validateSurrounding();
@@ -87,15 +82,12 @@ class Automate : public QWidget
         void cellToStateMethod(int row, int column);
         void chooseSurrounding();
         void applySurrounding();
+        void validateRuleIntension();
+
 
     signals:
         void cellToState(int row, int columnn, int index);
 };
-
-
-
-
-
 
 
 #endif // AUTOMATE_H

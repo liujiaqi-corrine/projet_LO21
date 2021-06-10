@@ -4,14 +4,13 @@
 Automate::Automate() : QWidget()
 {
     added = 0; //les deux added seront unissables apres, la maintenant flemme
-    added_rules = 0;
-    added_states=0;
     ran = 0;
     total_ran = 0;
 
 
     b_library = new QPushButton("Bibliothèque",this);
     b_voisinage = new QPushButton("Afficher Voisinage",this);
+    b_surrounding = new QPushButton("Choisir Voisinage",this);
     b_rules = new QPushButton("Definir règles",this);
     b_next = new QPushButton("Grille suivante",this);
     b_reset = new QPushButton("Reset",this);
@@ -19,6 +18,7 @@ Automate::Automate() : QWidget()
         b_run->setMinimum(1);
     b_number = new QLCDNumber();
     b_config = new QPushButton("Ajouter Config");
+    b_intension = new QPushButton("Ajouter Intension");
     b_random = new QPushButton("Grille aléatoire");
 
     lib = new Library;
@@ -55,8 +55,10 @@ void Automate::drawInterface(){
 
     QVBoxLayout *principal = new QVBoxLayout;
         principal->addWidget(b_library);
+        principal->addWidget(b_surrounding);
         principal->addWidget(b_voisinage);
         principal->addWidget(b_rules);
+        principal->addWidget(b_intension);
         principal->addWidget(b_config);
         principal->addWidget(b_reset);
         principal->addLayout(run);
@@ -68,10 +70,12 @@ void Automate::drawInterface(){
 
     QObject::connect(b_library,&QPushButton::clicked,this,&Automate::chooseModel);
     QObject::connect(b_voisinage,&QPushButton::clicked,this,&Automate::displaySurrounding);
-    QObject::connect(b_rules,&QPushButton::clicked,this,&Automate::chooseRules);
+    QObject::connect(b_surrounding,&QPushButton::clicked,this,&Automate::chooseSurrounding);
+    //QObject::connect(b_rules,&QPushButton::clicked,this,&Automate::chooseRules);
     QObject::connect(b_next,&QPushButton::clicked,this,&Automate::run);
     QObject::connect(b_reset,&QPushButton::clicked,this,&Automate::reset);
     QObject::connect(b_config,&QPushButton::clicked,this,&Automate::drawConfig);
+    QObject::connect(b_intension,&QPushButton::clicked,this,&Automate::defineRuleIntension);
     QObject::connect(b_random,&QPushButton::clicked,this,&Automate::generateRandomGrid);
 
 
@@ -79,6 +83,16 @@ void Automate::drawInterface(){
 
 
 void Automate::run(){
+
+    if (!lib->getCurrentModel()->getVoisinage()){
+        QMessageBox::critical(this, "Avertissement", "Vous n'avez pas defini de voisinage pour le modele" + lib->getCurrentModel()->getName());
+        return;
+    }
+
+    if (!lib->getCurrentModel()->getRule() && !lib->getCurrentModel()->getRuleExtension()){
+        QMessageBox::critical(this, "Avertissement", "Vous n'avez aucune règle pour le modele" + lib->getCurrentModel()->getName());
+        return;
+    }
 
     if (ran <  b_run->value()){
 
@@ -118,6 +132,7 @@ void Automate::run(){
 
 State* Automate::nextIntension(int i, int j){
 
+    if (!lib->getCurrentModel()->getRule()) return nullptr;
 
     qDebug("nextIntension");
 
@@ -171,7 +186,7 @@ State* Automate::nextIntension(int i, int j){
 
 State* Automate::nextConfig(int i, int j){
 
-    if (lib->getCurrentModel()->getRuleExtension()==nullptr) return nullptr;
+    if (!lib->getCurrentModel()->getRuleExtension()) return nullptr;
 
     qDebug("nextConfig");
     int rayon = lib->getCurrentModel()->getVoisinage()->getDiametre()/2;
@@ -213,209 +228,63 @@ State* Automate::nextConfig(int i, int j){
             if (!verif2) return nullptr;
 }
 
-void Automate::addConfig(){
+void Automate::defineRuleIntension(){ //Pour l'instant on crée les regles pour le modele courant
 
-    list = new QComboBox;
-    for (int i=0;i<lib->getCurrentModel()->getNbState();i++) list->addItem(lib->getCurrentModel()->getListStates()[i]->getLabel());
-
-
-    QPushButton *annuler = new QPushButton("Annuler");
-    QPushButton *valider = new QPushButton("Valider");
-
-    QHBoxLayout *boutons = new QHBoxLayout;
-        boutons->addWidget(annuler);
-        boutons->addWidget(valider);
-
-    QFormLayout *form = new QFormLayout;
-        form->addRow("Ajouter config pour :", list);
-
-    QVBoxLayout *vertical = new QVBoxLayout;
-        vertical->addLayout(form);
-        vertical->addLayout(boutons);
-
-    infos = new QDialog(this);
-        infos->setWindowTitle("Choix d'un Modele");
-        infos->setModal(true);
-        infos->setLayout(vertical);
-        infos->show();
-
-   QObject::connect(valider,&QPushButton::clicked,this,&Automate::defineConfig);
-   QObject::connect(valider,&QPushButton::clicked,infos,&QDialog::close);
-   QObject::connect(annuler,&QPushButton::clicked,infos,&QDialog::close);
-
-}
-
-void Automate::defineConfig(){
-
-    lib->getCurrentModel()->setRuleExtension(new Rule_Extension(lib->getCurrentModel()->getNbState()));
-
-    QPushButton *valider = new QPushButton("Valider");
-
-    Grid* voisins = new Grid(nb->value()*2-1,this);
-
-    QVBoxLayout *vertical = new QVBoxLayout;
-        vertical->addWidget(voisins);
-        vertical->addWidget(valider);
-
-    infos = new QDialog(this);
-        infos->setWindowTitle("Définition du Voisinage");
-        infos->setModal(true);
-        infos->setLayout(vertical);
-        infos->show();
-
-    QObject::connect(valider,&QPushButton::clicked,infos,&QDialog::close);
-    QObject::connect(valider,&QPushButton::clicked,this,&Automate::chooseModel);
-
-}
-
-
-void Automate::chooseRules(){
-
-
-    QPushButton *suivant = new QPushButton("Suivant");
-    QPushButton *annuler = new QPushButton("Annuler");
-
-    nom = new QLineEdit;
-
-    r_intension = new QRadioButton("En Intension",this);
-    r_extension = new QRadioButton("En Extension",this);
-
-    /*Grid* voisins = new Grid(grille->getParent()->getLib()->getCurrentModel()->getVoisinage()->getDiametre(),this);
-    for (int i=0; i<voisins->rowCount(); i++){
-        for (int j=0; j<voisins->columnCount(); j++){
-            if (grille->getParent()->getLib()->getCurrentModel()->getVoisinage()->getInteractable()[voisins->rowCount()*i+j] == true)
-                voisins->getlistCells()[i][j]->setBackground(QBrush(QColor(Qt::black)));
-        }
-    }*/
-
-    QFormLayout *name = new QFormLayout;
-        name->addWidget(nom);
-
-    QVBoxLayout *radio = new QVBoxLayout;
-        radio->addWidget(r_intension);
-        radio->addWidget(r_extension);
-
-    QHBoxLayout *boutons = new QHBoxLayout;
-        boutons->addWidget(annuler);
-        boutons->addWidget(suivant);
-
-    QVBoxLayout *vertical = new QVBoxLayout;
-        vertical->addLayout(name);
-        vertical->addLayout(radio);
-        //vertical->addWidget(voisins);
-        vertical->addLayout(boutons);
-
-   infos = new QDialog(this);
-       infos->setWindowTitle("Définition de la règle");
-       infos->setModal(true);
-       infos->setLayout(vertical);
-       infos->show();
-
-
-   QObject::connect(suivant,&QPushButton::clicked,this,&Automate::defineRulesStates);
-   QObject::connect(suivant,&QPushButton::clicked,infos,&QDialog::close);
-   QObject::connect(annuler,&QPushButton::clicked,infos,&QDialog::close);
-
-}
-
-
-void Automate::defineRules(){
-
-    added_states=0;
-    if (r_intension->isChecked() == true){
-
-        // Creation de la regle
-        lib->getCurrentModel()->setRule(new Rule_Intension(nom->text(),lib->getCurrentModel(),lib->getCurrentModel()->getNbState()));
-
-        this->setWindowTitle(QString::number(lib->getCurrentModel()->getNbState()));
-
-        for (int i =0; i<lib->getCurrentModel()->getNbState();i++){
-            defineRulesStates();
-            added_states++;
-
-
-        }
-
-    }
-
-    /*else
-       if (r_extension->isChecked() == true){
-           lib->getCurrentModel()->setRule(new Rule_Extension(nom->text(),lib->getCurrentModel()));
-           Rules* regle = lib->getCurrentModel()->getRule() ;
-
-
-       }*/
-
-}
-
-void Automate::defineRulesStates(){ //Pour l'instant on crée les regles pour le modele courant
-
-    /*if (r_intension->isChecked() == true){
-        lib->getCurrentModel()->setRule(new Rule_Intension(nom->text(),lib->getCurrentModel(),lib->getCurrentModel()->getNbState()));
-
-
-        //Ajout à la fin du vector, dans l'ordre de la listStates
-        if (added_rules>0)
-            lib->getCurrentModel()->getRule()->setVoisins(added_states,nb->value(),nb1->value());
-
-        added_rules++;
-
-        if (added_rules>lib->getCurrentModel()->getNbState()){
-            added_rules = 0;
-            added_states++;
-            if (added_states>=lib->getCurrentModel()->getNbState()){
-                    added_states = 0;
-                    return;
-            }else{
-                defineRulesStates();
-                return;}
-        }
-
-
-        //Case correspondante à un etat
-        QTableWidget* carre = new QTableWidget(1,1,this);
-        carre->horizontalHeader()->setVisible(false);
-        carre->verticalHeader()->setVisible(false);
-        carre->setSelectionMode(QAbstractItemView::SingleSelection);
-        carre->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        carre->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        carre->resizeColumnsToContents();
-        carre->resizeRowsToContents();
-        carre->setItem(0,0, new QTableWidgetItem());
-        carre->item(0,0)->setFlags(Qt::NoItemFlags);
-        carre->item(0,0)->setBackground(lib->getCurrentModel()->getListStates()[added_rules-1]->getColor());
-
-        QPushButton *suivant = new QPushButton("Suivant");
+        QPushButton *suivant = new QPushButton("Autre Regle");
+        QPushButton *terminer = new QPushButton("Terminer");
 
         nb = new QSpinBox;
             nb->setMinimum(-1); // -1 pour ne pas prendre en compte un etat particulier
             nb->setMaximum(lib->getCurrentModel()->getVoisinage()->getDiametre()*lib->getCurrentModel()->getVoisinage()->getDiametre()-1);
             nb->setValue(0);
 
-
         nb1 = new QSpinBox;
             nb1->setMinimum(-1); // -1 pour ne pas prendre en compte un etat particulier
             nb1->setMaximum(lib->getCurrentModel()->getVoisinage()->getDiametre()*lib->getCurrentModel()->getVoisinage()->getDiametre()-1);
             nb1->setValue(nb1->maximum());
 
+        list = new QComboBox;
+        for (int i=0;i<lib->getCurrentModel()->getNbState();i++) list->addItem(lib->getCurrentModel()->getListStates()[i]->getLabel());
+
+        list1 = new QComboBox;
+        for (int i=0;i<lib->getCurrentModel()->getNbState();i++) list1->addItem(lib->getCurrentModel()->getListStates()[i]->getLabel());
+
+        list2 = new QComboBox;
+        for (int i=0;i<lib->getCurrentModel()->getNbState();i++) list2->addItem(lib->getCurrentModel()->getListStates()[i]->getLabel());
+
         QFormLayout *form = new QFormLayout;
+            form->addRow("La Cellule:",list);
+            form->addRow("Se transformera en:",list1);
             form->addRow("Min :",nb);
             form->addRow("Max :",nb1);
+            form->addRow("de cellules:",list2);
 
         QVBoxLayout *vertical = new QVBoxLayout;
-            vertical->addWidget(carre);
             vertical->addLayout(form);
             vertical->addWidget(suivant);
+            vertical->addWidget(terminer);
 
         infos = new QDialog(this);
-            infos->setWindowTitle("Définition de la règle " + lib->getCurrentModel()->getListStates()[added_states]->getLabel() );
+            infos->setWindowTitle("Définition de regle Intension pour "+lib->getCurrentModel()->getName());
             infos->setModal(true);
             infos->setLayout(vertical);
             infos->show();
 
         QObject::connect(suivant,&QPushButton::clicked,infos,&QDialog::close);
-        QObject::connect(suivant,&QPushButton::clicked,this,&Automate::defineRulesStates);
-    }*/
+        QObject::connect(suivant,&QPushButton::clicked,this,&Automate::validateRuleIntension);
+        QObject::connect(suivant,&QPushButton::clicked,this,&Automate::defineRuleIntension);
+        QObject::connect(terminer,&QPushButton::clicked,infos,&QDialog::close);
+        QObject::connect(terminer,&QPushButton::clicked,this,&Automate::validateRuleIntension);
+
+}
+
+void Automate::validateRuleIntension(){
+
+    if (!lib->getCurrentModel()->getRule())
+            lib->getCurrentModel()->setRule(new Rule_Intension(nom->text(),lib->getCurrentModel(),lib->getCurrentModel()->getNbState()));
+
+    lib->getCurrentModel()->getRule()->setVoisins(list->currentIndex(),list1->currentIndex(),list2->currentIndex(),nb->value(),nb1->value()) ; //;
+
 }
 
 
@@ -477,7 +346,7 @@ void Automate::applyModel(){
 }
 
 void Automate::applySurrounding(){
-    lib->getListModels()[lib->getListModels().size()-1]->setVoisinage(lib->getListSurrounding()[list->currentIndex()]);
+    lib->getCurrentModel()->setVoisinage(lib->getListSurrounding()[list->currentIndex()]);
 }
 
 void Automate::defineModel(){
@@ -526,10 +395,9 @@ void Automate::defineStates(){
     //Ajout de l'Etat récupérés dans l'appel à defineStates précedent
     if(added>0) lib->getListModels()[lib->getListModels().size()-1]->getListStates()[added-1] = new State(added-1,QColor(*couleur),label->text());
 
-    if (added==nb->value()) {
-        this->chooseSurrounding();
+    if (added==nb->value())
         return;
-    }
+
 
 
     added++;
@@ -546,6 +414,9 @@ void Automate::defineStates(){
     QVBoxLayout *vertical = new QVBoxLayout;
         vertical->addLayout(form);
         vertical->addWidget(suivant);
+
+    label->setText(QString::number(added-1));
+    couleur = new QColor(Qt::white);
 
     infos = new QDialog(this);
         QString concat = "Definir Etat n°" + QString::number(added);
@@ -577,7 +448,6 @@ void Automate::defineColor(){
 
 
 void Automate::defineSurrounding(){
-
 
     nom = new QLineEdit;
     nb = new QSpinBox;
@@ -664,6 +534,7 @@ void Automate::validateConfig(){
     lib->getCurrentModel()->getRuleExtension()->addConfig(list->currentIndex(),conf);
 }
 
+
 void Automate::chooseSurrounding(){
 
     added=0; //pour pouvoir recreer un modele
@@ -692,12 +563,13 @@ void Automate::chooseSurrounding(){
         vertical->addLayout(boutons);
 
     infos = new QDialog(this);
-        infos->setWindowTitle("Choix d'un Voisinage");
+        infos->setWindowTitle("Choix d'un Voisinage pour "+lib->getCurrentModel()->getName());
         infos->setModal(true);
         infos->setLayout(vertical);
         infos->show();
 
     QObject::connect(valider,&QPushButton::clicked,this,&Automate::applySurrounding);
+    //QObject::connect(valider,&QPushButton::clicked,this,&Automate::chooseRules);
     QObject::connect(valider,&QPushButton::clicked,infos,&QDialog::close);
     QObject::connect(creer,&QPushButton::clicked,this,&Automate::defineSurrounding);
     QObject::connect(creer,&QPushButton::clicked,infos,&QDialog::close);
@@ -785,25 +657,4 @@ void Automate::cellToStateMethod(int row, int column){
 
 }
 
-
-
-
-/*void Automate::liberateDialog(){
-
-
-    //Qt libere automatique à la fin des fonctions
-
-    //added=0; ajouter apres pour pouvoir recreer un modele
-
-    delete infos;
-    delete nom;
-    delete nb;
-    delete color;
-    delete couleur;
-    delete label;
-    //delete list;
-
-
-
-}*/
 

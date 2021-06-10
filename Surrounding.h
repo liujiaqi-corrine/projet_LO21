@@ -18,8 +18,8 @@ class Surrounding : public QObject
         QString getName() {return name;}
         int* getInteractable() const {return interactable;}
         void setInteractable(int row, int colomn, int index);
-        void setNotInteractable(int row, int colomn, int index);
         int getDiametre() const {return diametre;}
+
 
 
         //Surcharge opérateur =  pour le calcul des regles ou surcharge de la classe grille

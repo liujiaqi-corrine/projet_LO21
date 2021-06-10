@@ -37,17 +37,6 @@ class Rules {
 class Rule_Intension : public Rules {
 
     private :
-        /*struct condition{
-            int index_comptant;
-            int min;
-            int max;
-        } typedef condition;
-        struct transfo{
-            int index_suivant;
-            std::vector<condition> conditions;
-        } typedef tranfo;
-        transfo*** state_rules;*/
-
         std::vector<condition>*** states_rules;
 
     public :
