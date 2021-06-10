@@ -22,13 +22,13 @@ class Library // Singleton
         vector<Surrounding*>* getListSurroundings() const;
         vector<Model*>* getListModels() const;
 
-        void add_Surrounding(Surrounding* new_surrounding);
+        void create_Surrounding(string _name);
         Surrounding* get_Surrounding(unsigned int surrounding_id);
-        void del_Surrounding(Surrounding* _surrounding);
+        void del_Surrounding(unsigned int surrounding_id);
 
-        void add_Model(Model* new_model);
+        void create_Model(string _title, string _description = "", string _author = "", string _date = "");
         Model* get_Model(unsigned int model_id);
-        void del_Model(Model* _model);
+        void del_Model(unsigned int model_id);
 };
 
 

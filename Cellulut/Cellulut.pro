@@ -2,21 +2,15 @@ QT += widgets
 QT += core gui sql
 
 SOURCES += \
-    data/DataEngine.cpp \
-    data/interfaces/InsideDataForUI.cpp \
     main.cpp \
     models/Automate.cpp \
     models/Cell.cpp \
-    models/Cellulut.cpp \
     models/Grid.cpp \
     models/Library.cpp \
     models/Model.cpp \
     models/Rule.cpp \
     models/State.cpp \
     models/Surrounding.cpp \
-    models/managers/DatabaseManager.cpp \
-    models/managers/ModelsManager.cpp \
-    models/managers/StatesManager.cpp \
     ui/UIEngine.cpp \
     ui/interfaces/InsideUIForData.cpp \
     ui/views/MainMenuView.cpp \
@@ -28,21 +22,15 @@ SOURCES += \
     ui/views/templates/LoadTemplateView.cpp
 
 HEADERS += \
-    data/DataEngine.h \
-    data/interfaces/InsideDataForUI.h \
     main.h \
     models/Automate.h \
     models/Cell.h \
-    models/Cellulut.h \
     models/Grid.h \
     models/Library.h \
     models/Model.h \
     models/Rule.h \
     models/State.h \
     models/Surrounding.h \
-    models/managers/DatabaseManager.h \
-    models/managers/ModelsManager.h \
-    models/managers/StatesManager.h \
     ui/UIEngine.h \
     ui/interfaces/InsideUIForData.h \
     ui/views/MainMenuView.h \

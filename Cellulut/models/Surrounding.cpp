@@ -2,7 +2,7 @@
 #include "models/Surrounding.h"
 #include "models/Library.h"
 
-Surrounding::Surrounding(unsigned int _id_surrounding, string _name, unsigned int _radius): id_surrounding(_id_surrounding), name(_name), radius(_radius)
+Surrounding::Surrounding(unsigned int _id, string _name, unsigned int _radius): id_surrounding(_id), name(_name), radius(_radius)
 {
     this->id_surrounding = Library::getLibrary()->getListSurroundings()->size();
     this->interaction = new vector<bool>;
@@ -30,7 +30,7 @@ void Surrounding::setInteraction(vector<bool>*_interaction){this->interaction = 
 
 void Surrounding::afficher_surround()
 {
-    unsigned int size = radius * 2 + 1;
+    unsigned int size = this->radius * 2 + 1;
     for (unsigned int i = 0; i < size; i++)
     {
         for (unsigned int j = 0; j < size; j++)
@@ -40,12 +40,11 @@ void Surrounding::afficher_surround()
             else
                 cout<<"False ";
         }
-        cout << "\n";
+        cout << endl;
     }
 }
 
 void Surrounding::addInteraction(vector<bool> _interactionLine){
-    cout << "Adding " << _interactionLine.size() << "\n";
     for(unsigned int i = 0; i < _interactionLine.size() ; i++){
         this->interaction->push_back(_interactionLine.at(i));
     }

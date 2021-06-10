@@ -5,6 +5,56 @@
 
 Automate* Automate::singleton = new Automate;
 
+Automate::Automate()
+{
+// Adding surroundings
+    // von Neumann
+    Library::getLibrary()->create_Surrounding("von Neumann");
+    Library::getLibrary()->getListSurroundings()->at(0)->addInteraction({false, true, false});
+    Library::getLibrary()->getListSurroundings()->at(0)->addInteraction({true, true, true});
+    Library::getLibrary()->getListSurroundings()->at(0)->addInteraction({false, true, false});
+
+    // Moore
+    Library::getLibrary()->create_Surrounding("Moore");
+    Library::getLibrary()->getListSurroundings()->at(1)->addInteraction({true, true, true});
+    Library::getLibrary()->getListSurroundings()->at(1)->addInteraction({true, true, true});
+    Library::getLibrary()->getListSurroundings()->at(1)->addInteraction({true, true, true});
+
+// Adding models
+    // Life Game
+    Library::getLibrary()->create_Model("Life Game");
+    State* dead = new State(0, "dead","white");
+    State* alive = new State(1, "alive","black");
+    Library::getLibrary()->getListModels()->at(0)->add_State(dead); // State dead added
+    Library::getLibrary()->getListModels()->at(0)->add_State(alive); // State alive added
+    Library::getLibrary()->getListModels()->at(0)->setSurrounding(Library::getLibrary()->getListSurroundings()->at(1)); // Surrounding set on Moore
+    Rule_int* life_game_rule_1 = new Rule_int(1, 0, 0, 0); // Par défaut, une cellule devient morte
+    Rule_int* life_game_rule_2 = new Rule_int(0, 3, 1, 1); // Une cellule morte avec 3 voisins vivants devient vivante
+    Rule_int* life_game_rule_3 = new Rule_int(1, 2, 1, 1); // Une cellule vivante avec 2 voisins vivants devient vivante
+    Rule_int* life_game_rule_4 = new Rule_int(1, 3, 1, 1); // Une cellule vivante avec 3 voisins vivants devient vivante
+    Library::getLibrary()->getListModels()->at(0)->add_Rule_int(life_game_rule_1);
+    Library::getLibrary()->getListModels()->at(0)->add_Rule_int(life_game_rule_2);
+    Library::getLibrary()->getListModels()->at(0)->add_Rule_int(life_game_rule_3);
+    Library::getLibrary()->getListModels()->at(0)->add_Rule_int(life_game_rule_4);
+
+    // Brian's brain
+    Library::getLibrary()->create_Model("Brian's brain");
+    State* off = new State(0, "off","green");
+    State* firing = new State(1, "firing","red");
+    State* refractory = new State(2, "refractory","yellow");
+    Library::getLibrary()->getListModels()->at(1)->add_State(off); // State off added
+    Library::getLibrary()->getListModels()->at(1)->add_State(firing); // State firing added
+    Library::getLibrary()->getListModels()->at(1)->add_State(refractory); // State refractory added
+    Library::getLibrary()->getListModels()->at(1)->setSurrounding(Library::getLibrary()->getListSurroundings()->at(1)); // Surrounding set on Moore
+    Rule_int* brians_brain_rule_1 = new Rule_int(1, 0, 0, 2); // Une cellule excitée devient réfractaire
+    Rule_int* brians_brain_rule_2 = new Rule_int(2, 0, 0, 0); // Une cellule réfractaire devient au repos
+    Rule_int* brians_brain_rule_3 = new Rule_int(0, 2, 1, 1); // Une cellule au repos avec 2 voisins excités devient excitée
+    Library::getLibrary()->getListModels()->at(1)->add_Rule_int(brians_brain_rule_1);
+    Library::getLibrary()->getListModels()->at(1)->add_Rule_int(brians_brain_rule_2);
+    Library::getLibrary()->getListModels()->at(1)->add_Rule_int(brians_brain_rule_3);
+}
+
+
 Model* Automate::getModel() const{return this->model;}
 
 vector<unsigned int**>* Automate::getHistoric() const{return this->historic;}
@@ -113,9 +163,9 @@ void Automate::random_init()
 unsigned int Automate::count_nearby_state(unsigned int x, unsigned int y, unsigned int state_index)
 {
     unsigned int k = 0;
-    for (int i=0; i < 3; i++)
+    for (unsigned int i=0; i < 3; i++)
     {
-        for(int j=0; j < 3; j++)
+        for(unsigned int j=0; j < 3; j++)
         {
             if (i==1 and j==1)
                 continue;
@@ -123,52 +173,98 @@ unsigned int Automate::count_nearby_state(unsigned int x, unsigned int y, unsign
             int column = y + j - 1;
             if (row < 0)
                 row = Grid::getGrid()->getRows() - 1;
+            else if (row == Grid::getGrid()->getRows())
+                row = 0;
             if (column < 0)
                 column = Grid::getGrid()->getColumns() - 1;
-            if (row == Grid::getGrid()->getRows())
-                row = 0;
-            if (column == Grid::getGrid()->getColumns())
+            else if (column == Grid::getGrid()->getColumns())
                 column = 0;
-            if (Grid::getGrid()->getlistCells()[row][column].getState()->getIndex() == state_index)
+            if (this->getModel()->getSurrounding()->getInteraction()->at(i*(this->getModel()->getSurrounding()->getRadius()*2+1) + j) and Grid::getGrid()->getlistCells()[row][column].getState()->getIndex() == state_index)
                 k += 1;
         }
     }
     return k;
 }
 
-unsigned int Automate::check_rule_int(unsigned int x, unsigned int y, unsigned int rule_index)
+unsigned int Automate::check_rule_int(unsigned int x, unsigned int y, unsigned int rule_int_index)
 {
     Cell current_cell = Grid::getGrid()->getlistCells()[x][y];
-    Rule_int* current_rule = this->getModel()->getRule_int()->at(rule_index);
+    Rule_int* current_rule = this->getModel()->getRule_int()->at(rule_int_index);
     if (current_cell.getState()->getIndex() == current_rule->getRule_current_state())
         if (!current_rule->getRule_nb_nearby() or count_nearby_state(x,y,current_rule->getRule_state_nearby()) == current_rule->getRule_nb_nearby())
             return 1;
     return 0;
 }
 
+unsigned int Automate::check_rule_ext(unsigned int x, unsigned int y, unsigned int rule_ext_index)
+{
+    Cell current_cell = Grid::getGrid()->getlistCells()[x][y];
+    Rule_ext* current_rule = this->getModel()->getRule_ext()->at(rule_ext_index);
+    unsigned int current_radius = current_rule->getRadius();
+    if (current_cell.getState()->getIndex() == current_rule->getCurrent_config()->at((current_radius*2+1)*current_radius+current_radius))
+    {
+        for (unsigned int i=0; i < current_radius*2+1; i++)
+        {
+            for(unsigned int j=0; j < current_radius*2+1; j++)
+            {
+                if (i==1 and j==1)
+                    continue;
+                int row = x + i - current_radius;
+                int column = y + j - current_radius;
+                if (row < 0)
+                    row = Grid::getGrid()->getRows() - 1;
+                else if (row == Grid::getGrid()->getRows())
+                    row = 0;
+                if (column < 0)
+                    column = Grid::getGrid()->getColumns() - 1;
+                else if (column == Grid::getGrid()->getColumns())
+                    column = 0;
+                if (Grid::getGrid()->getlistCells()[row][column].getState()->getIndex() != current_rule->getCurrent_config()->at(i*(current_radius*2+1)+j))
+                    return 0;
+            }
+        }
+        return 1;
+    }
+    return 0;
+}
+
 void Automate::next_generation()
 {
-    // Initialize next_grid with 0
+    cout<<"Calcul next generation :"<<endl;
+    // Initialize next_grid with values from current grid
     unsigned int** next_grid = new unsigned int*[Grid::getGrid()->getRows()];
         for (unsigned int i=0; i < Grid::getGrid()->getRows(); i++)
         {
             next_grid[i] = new unsigned int[Grid::getGrid()->getColumns()];
             for (unsigned int j=0; j < Grid::getGrid()->getColumns(); j++)
-                next_grid[i][j] = 0;
+                next_grid[i][j] = Grid::getGrid()->getlistCells()[i][j].getState()->getIndex();
         }
 
     // Check rules for each cell
-    for (unsigned int i=0; i < Grid::getGrid()->getRows(); i++){
-        for (unsigned int j=0; j < Grid::getGrid()->getColumns(); j++)
-        {
-            for(unsigned int k = 0; k < this->model->getRule_int()->size(); k++)
+        //Intentional rules
+    if (this->model->getRule_int()->size())
+        for (unsigned int i=0; i < Grid::getGrid()->getRows(); i++){
+            for (unsigned int j=0; j < Grid::getGrid()->getColumns(); j++)
             {
-                if (check_rule_int(i, j, k))
-                    next_grid[i][j] = this->model->getRule_int()->at(k)->getRule_next_state();
+                for(unsigned int k = 0; k < this->model->getRule_int()->size(); k++)
+                {
+                    if (check_rule_int(i, j, k))
+                        next_grid[i][j] = this->model->getRule_int()->at(k)->getRule_next_state();
+                }
             }
         }
-    }
-
+        // Extensional rules
+    if (this->model->getRule_ext()->size())
+        for (unsigned int i=0; i < Grid::getGrid()->getRows(); i++){
+            for (unsigned int j=0; j < Grid::getGrid()->getColumns(); j++)
+            {
+                for(unsigned int k = 0; k < this->model->getRule_ext()->size(); k++)
+                {
+                    if (check_rule_ext(i, j, k))
+                        next_grid[i][j] = this->model->getRule_ext()->at(k)->getNext_state_index();
+                }
+            }
+        }
     // Put new values in Grid
     for (unsigned int i=0; i < Grid::getGrid()->getRows(); i++)
     {
@@ -198,7 +294,7 @@ void Automate::afficher_grid()
     cout<<"Affichage grid :"<<endl;
     for (unsigned int i=0; i < Grid::getGrid()->getRows(); i++){
         for (unsigned int j=0; j < Grid::getGrid()->getColumns(); j++)
-            cout<<Grid::getGrid()->getlistCells()[i][j].getState()->getLabel()<<" ";
+            cout<<Grid::getGrid()->getlistCells()[i][j].getState()->getIndex()<<" ";
         cout<<"\n";
     }
 }

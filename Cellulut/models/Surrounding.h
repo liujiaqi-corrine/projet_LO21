@@ -10,8 +10,8 @@ class Surrounding
         string name;
         unsigned int radius;
         vector<bool>* interaction;
+        Surrounding(unsigned int _id, string _name, unsigned int _radius = 1);
     public :
-        Surrounding(unsigned int _id_surrounding = 0, string _name = "", unsigned int _radius = 1);
         ~Surrounding();
 
         unsigned int getId_Surrounding() const;
@@ -25,6 +25,8 @@ class Surrounding
 
         void afficher_surround();
         void addInteraction(vector<bool> _interactionLine);
+
+        friend class Library;
 };
 
 
