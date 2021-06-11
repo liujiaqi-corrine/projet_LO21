@@ -8,21 +8,21 @@ class Grid // Singleton
 {
     protected :
         static Grid* singleton; // Pointer to singleton
-        Grid() = default; // Private constructor
-        unsigned int rows;
-        unsigned int columns;
-        Cell** listCells;
+        Grid(); // Private constructor
+        unsigned int size;
+        map<string, Cell*> *mapCells;
     public :
         static Grid* getGrid() noexcept {return singleton;}
         ~Grid() = default;
 
-        unsigned int getRows() const;
-        unsigned int getColumns() const;
-        Cell** getlistCells() const;
+        unsigned int getSize() const;
+        map<string, Cell*>* getCells() const;
 
-        void setRows(unsigned int _rows);
-        void setColumns(unsigned int _columns);
-        void setlistCells(Cell** _listCells);
+        void setSize(unsigned int _size);
+        void setCells(map<string, Cell*>* _cells);
+
+        void removeAllCells();
+        map<int,int> countNbCellsPerState();
 };
 
 

@@ -1,18 +1,37 @@
 #include "MainWindow.h"
-#include "ui_MainWindow.h"
 
 MainWindow::MainWindow(QWidget *parent, UIEngine *_uiEngine) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow),
     uiEngine(_uiEngine)
 {
-    ui->setupUi(this);
+    this->resize(WINDOW_WIDTH, WINDOW_HEIGHT);
+
+    mainMenuAct = new QAction(tr("&Menu principal"), this);
+    mainMenuAct->setStatusTip(tr("Aller au menu principal"));
+
+    loadModelAct = new QAction(tr("&Charger un modèle"), this);
+    loadModelAct->setStatusTip(tr("Charger un modèle pour la simulation"));
+
+    simulationAct = new QAction(tr("&Simulation"), this);
+    simulationAct->setStatusTip(tr("Aller à la vue Simulation"));
+
+    this->menuBar()->addAction(mainMenuAct);
+    this->menuBar()->addAction(loadModelAct);
+    this->menuBar()->addAction(simulationAct);
+
+    connect(mainMenuAct, &QAction::triggered, this->uiEngine, &UIEngine::changeToMainMenuView);
+    connect(loadModelAct, &QAction::triggered, this->uiEngine, &UIEngine::changeToLoadModelFormView);
+    connect(simulationAct, &QAction::triggered, this->uiEngine, &UIEngine::changeToSimulationView);
+
     qInfo() << "MainWindow::MainWindow - constructor";
 }
 
 MainWindow::~MainWindow()
 {
-    delete ui;
+    delete mainMenuAct;
+    delete loadModelAct;
+    delete simulationAct;
+
     qInfo() << "MainWindow::~MainWindow - destructor";
 }
 
@@ -24,31 +43,4 @@ void MainWindow::keyPressEvent(QKeyEvent* event)
     }
     else
         QWidget::keyPressEvent(event);
-}
-
-
-void MainWindow::on_actionGoToSimulation_triggered()
-{
-    qInfo() << "MainWindow::on_actionGoToSimulation_triggered";
-    this->uiEngine->changeToSimulationView();
-}
-
-
-void MainWindow::on_actionGoToMainMenu_triggered()
-{
-    qInfo() << "MainWindow::on_actionGoToMainMenu_triggered";
-    this->uiEngine->changeToMainMenuView();
-}
-
-
-void MainWindow::on_actionGoToCreateTemplate_triggered()
-{
-    qInfo() << "MainWindow::on_actionGoToCreateTemplate_triggered";
-    this->uiEngine->changeToCreateTemplateView();
-}
-
-void MainWindow::on_actionGoToLoadTemplate_triggered()
-{
-    qInfo() << "MainWindow::on_actionGoToLoadTemplate_triggered";
-    this->uiEngine->changeToLoadTemplateView();
 }

@@ -62,35 +62,30 @@ vector<unsigned int**>* Automate::getHistoric() const{return this->historic;}
 
 void Automate::setModel(Model* _model){this->model = _model;}
 
-void Automate::init_Grid(unsigned int rows, unsigned int columns)
+void Automate::init_Grid(unsigned int size)
 {
-    Grid::getGrid()->setRows(rows);
-    Grid::getGrid()->setColumns(columns);
-    Grid::getGrid()->setlistCells(new Cell*[rows]);
+    Grid::getGrid()->setSize(size);
 
-    for (unsigned int i=0; i < rows; i++)
+    for (unsigned int i=0; i < size*size; i++)
     {
-        Grid::getGrid()->getlistCells()[i] = new Cell[columns];
-        for (unsigned int j=0; j < columns; j++)
-        {
-            Grid::getGrid()->getlistCells()[i][j].setX(i);
-            Grid::getGrid()->getlistCells()[i][j].setY(j);
-            Grid::getGrid()->getlistCells()[i][j].setState(this->getModel()->getListStates()->at(0));
-        }
+        Cell *cell = new Cell(i%size, i/size);
+        cell->setState(this->model->getListStates()->at(0));
+        Grid::getGrid()->getCells()->insert({cell->getHash(), cell});
     }
-    return;
+
+    qInfo() << "Automate::init_Grid - grid initialized with size of "<< size;
 }
 
 void Automate::save_current_config()
 {
-    unsigned int** saved_grid = new unsigned int*[Grid::getGrid()->getRows()];
+    unsigned int** saved_grid = new unsigned int*[Grid::getGrid()->getSize()];
 
     // Initialize saved_grid with current grid states index
 
-    for (unsigned int i=0; i < Grid::getGrid()->getRows(); i++){
-        saved_grid[i] = new unsigned int[Grid::getGrid()->getColumns()];
-        for (unsigned int j=0; j < Grid::getGrid()->getColumns(); j++)
-            saved_grid[i][j] = Grid::getGrid()->getlistCells()[i][j].getState()->getIndex();
+    for (unsigned int i=0; i < Grid::getGrid()->getSize(); i++){
+        saved_grid[i] = new unsigned int[Grid::getGrid()->getSize()];
+        for (unsigned int j=0; j < Grid::getGrid()->getSize(); j++)
+            saved_grid[i][j] = Grid::getGrid()->getCells()->at(Cell::getHashFromPos(i,j))->getState()->getIndex();
     }
     this->getHistoric()->push_back(saved_grid);
     return;
@@ -111,35 +106,35 @@ State* Automate::random_state() // Return random state in listStates
 
 void Automate::manual_init()
 {
-    Grid::getGrid()->getlistCells()[0][0].setState(this->model->getListStates()->at(0));
-    Grid::getGrid()->getlistCells()[0][1].setState(this->model->getListStates()->at(0));
-    Grid::getGrid()->getlistCells()[0][2].setState(this->model->getListStates()->at(0));
-    Grid::getGrid()->getlistCells()[0][3].setState(this->model->getListStates()->at(0));
-    Grid::getGrid()->getlistCells()[0][4].setState(this->model->getListStates()->at(0));
+    Grid::getGrid()->getCells()->at(Cell::getHashFromPos(0,0))->setState(this->model->getListStates()->at(0));
+    Grid::getGrid()->getCells()->at(Cell::getHashFromPos(0,1))->setState(this->model->getListStates()->at(0));
+    Grid::getGrid()->getCells()->at(Cell::getHashFromPos(0,2))->setState(this->model->getListStates()->at(0));
+    Grid::getGrid()->getCells()->at(Cell::getHashFromPos(0,3))->setState(this->model->getListStates()->at(0));
+    Grid::getGrid()->getCells()->at(Cell::getHashFromPos(0,4))->setState(this->model->getListStates()->at(0));
 
-    Grid::getGrid()->getlistCells()[1][0].setState(this->model->getListStates()->at(0));
-    Grid::getGrid()->getlistCells()[1][1].setState(this->model->getListStates()->at(0));
-    Grid::getGrid()->getlistCells()[1][2].setState(this->model->getListStates()->at(0));
-    Grid::getGrid()->getlistCells()[1][3].setState(this->model->getListStates()->at(0));
-    Grid::getGrid()->getlistCells()[1][4].setState(this->model->getListStates()->at(0));
+    Grid::getGrid()->getCells()->at(Cell::getHashFromPos(1,0))->setState(this->model->getListStates()->at(0));
+    Grid::getGrid()->getCells()->at(Cell::getHashFromPos(1,1))->setState(this->model->getListStates()->at(0));
+    Grid::getGrid()->getCells()->at(Cell::getHashFromPos(1,2))->setState(this->model->getListStates()->at(0));
+    Grid::getGrid()->getCells()->at(Cell::getHashFromPos(1,3))->setState(this->model->getListStates()->at(0));
+    Grid::getGrid()->getCells()->at(Cell::getHashFromPos(1,4))->setState(this->model->getListStates()->at(0));
 
-    Grid::getGrid()->getlistCells()[2][0].setState(this->model->getListStates()->at(0));
-    Grid::getGrid()->getlistCells()[2][1].setState(this->model->getListStates()->at(1));
-    Grid::getGrid()->getlistCells()[2][2].setState(this->model->getListStates()->at(1));
-    Grid::getGrid()->getlistCells()[2][3].setState(this->model->getListStates()->at(1));
-    Grid::getGrid()->getlistCells()[2][4].setState(this->model->getListStates()->at(0));
+    Grid::getGrid()->getCells()->at(Cell::getHashFromPos(2,0))->setState(this->model->getListStates()->at(0));
+    Grid::getGrid()->getCells()->at(Cell::getHashFromPos(2,1))->setState(this->model->getListStates()->at(1));
+    Grid::getGrid()->getCells()->at(Cell::getHashFromPos(2,2))->setState(this->model->getListStates()->at(1));
+    Grid::getGrid()->getCells()->at(Cell::getHashFromPos(2,3))->setState(this->model->getListStates()->at(1));
+    Grid::getGrid()->getCells()->at(Cell::getHashFromPos(2,4))->setState(this->model->getListStates()->at(0));
 
-    Grid::getGrid()->getlistCells()[3][0].setState(this->model->getListStates()->at(0));
-    Grid::getGrid()->getlistCells()[3][1].setState(this->model->getListStates()->at(0));
-    Grid::getGrid()->getlistCells()[3][2].setState(this->model->getListStates()->at(0));
-    Grid::getGrid()->getlistCells()[3][3].setState(this->model->getListStates()->at(0));
-    Grid::getGrid()->getlistCells()[3][4].setState(this->model->getListStates()->at(0));
+    Grid::getGrid()->getCells()->at(Cell::getHashFromPos(3,0))->setState(this->model->getListStates()->at(0));
+    Grid::getGrid()->getCells()->at(Cell::getHashFromPos(3,1))->setState(this->model->getListStates()->at(0));
+    Grid::getGrid()->getCells()->at(Cell::getHashFromPos(3,2))->setState(this->model->getListStates()->at(0));
+    Grid::getGrid()->getCells()->at(Cell::getHashFromPos(3,3))->setState(this->model->getListStates()->at(0));
+    Grid::getGrid()->getCells()->at(Cell::getHashFromPos(3,4))->setState(this->model->getListStates()->at(0));
 
-    Grid::getGrid()->getlistCells()[4][0].setState(this->model->getListStates()->at(0));
-    Grid::getGrid()->getlistCells()[4][1].setState(this->model->getListStates()->at(0));
-    Grid::getGrid()->getlistCells()[4][2].setState(this->model->getListStates()->at(0));
-    Grid::getGrid()->getlistCells()[4][3].setState(this->model->getListStates()->at(0));
-    Grid::getGrid()->getlistCells()[4][4].setState(this->model->getListStates()->at(0));
+    Grid::getGrid()->getCells()->at(Cell::getHashFromPos(4,0))->setState(this->model->getListStates()->at(0));
+    Grid::getGrid()->getCells()->at(Cell::getHashFromPos(4,1))->setState(this->model->getListStates()->at(0));
+    Grid::getGrid()->getCells()->at(Cell::getHashFromPos(4,2))->setState(this->model->getListStates()->at(0));
+    Grid::getGrid()->getCells()->at(Cell::getHashFromPos(4,3))->setState(this->model->getListStates()->at(0));
+    Grid::getGrid()->getCells()->at(Cell::getHashFromPos(4,4))->setState(this->model->getListStates()->at(0));
 
     this->getHistoric()->clear();
     save_current_config();
@@ -149,12 +144,11 @@ void Automate::manual_init()
 void Automate::random_init()
 {
     this->getHistoric()->clear();
-
-    for (unsigned int i=0; i < Grid::getGrid()->getRows(); i++)
+    for (unsigned int i=0; i < Grid::getGrid()->getSize(); i++)
     {
-        for (unsigned int j=0; j < Grid::getGrid()->getColumns(); j++)
+        for (unsigned int j=0; j < Grid::getGrid()->getSize(); j++)
         {
-            Grid::getGrid()->getlistCells()[i][j].setState(random_state());
+            Grid::getGrid()->getCells()->at(Cell::getHashFromPos(i,j))->setState(random_state());
         }
     }
     return;
@@ -172,14 +166,14 @@ unsigned int Automate::count_nearby_state(unsigned int x, unsigned int y, unsign
             int row = x + i - 1;
             int column = y + j - 1;
             if (row < 0)
-                row = Grid::getGrid()->getRows() - 1;
-            else if (row == Grid::getGrid()->getRows())
+                row = Grid::getGrid()->getSize() - 1;
+            else if (row == Grid::getGrid()->getSize())
                 row = 0;
             if (column < 0)
-                column = Grid::getGrid()->getColumns() - 1;
-            else if (column == Grid::getGrid()->getColumns())
+                column = Grid::getGrid()->getSize() - 1;
+            else if (column == Grid::getGrid()->getSize())
                 column = 0;
-            if (this->getModel()->getSurrounding()->getInteraction()->at(i*(this->getModel()->getSurrounding()->getRadius()*2+1) + j) and Grid::getGrid()->getlistCells()[row][column].getState()->getIndex() == state_index)
+            if (this->getModel()->getSurrounding()->getInteraction()->at(i*(this->getModel()->getSurrounding()->getRadius()*2+1) + j) and Grid::getGrid()->getCells()->at(Cell::getHashFromPos(row,column))->getState()->getIndex() == state_index)
                 k += 1;
         }
     }
@@ -188,9 +182,9 @@ unsigned int Automate::count_nearby_state(unsigned int x, unsigned int y, unsign
 
 unsigned int Automate::check_rule_int(unsigned int x, unsigned int y, unsigned int rule_int_index)
 {
-    Cell current_cell = Grid::getGrid()->getlistCells()[x][y];
+    Cell* current_cell = Grid::getGrid()->getCells()->at(Cell::getHashFromPos(x,y));
     Rule_int* current_rule = this->getModel()->getRule_int()->at(rule_int_index);
-    if (current_cell.getState()->getIndex() == current_rule->getRule_current_state())
+    if (current_cell->getState()->getIndex() == current_rule->getRule_current_state())
         if (!current_rule->getRule_nb_nearby() or count_nearby_state(x,y,current_rule->getRule_state_nearby()) == current_rule->getRule_nb_nearby())
             return 1;
     return 0;
@@ -198,10 +192,10 @@ unsigned int Automate::check_rule_int(unsigned int x, unsigned int y, unsigned i
 
 unsigned int Automate::check_rule_ext(unsigned int x, unsigned int y, unsigned int rule_ext_index)
 {
-    Cell current_cell = Grid::getGrid()->getlistCells()[x][y];
+    Cell* current_cell = Grid::getGrid()->getCells()->at(Cell::getHashFromPos(x,y));
     Rule_ext* current_rule = this->getModel()->getRule_ext()->at(rule_ext_index);
     unsigned int current_radius = current_rule->getRadius();
-    if (current_cell.getState()->getIndex() == current_rule->getCurrent_config()->at((current_radius*2+1)*current_radius+current_radius))
+    if (current_cell->getState()->getIndex() == current_rule->getCurrent_config()->at((current_radius*2+1)*current_radius+current_radius))
     {
         for (unsigned int i=0; i < current_radius*2+1; i++)
         {
@@ -212,14 +206,14 @@ unsigned int Automate::check_rule_ext(unsigned int x, unsigned int y, unsigned i
                 int row = x + i - current_radius;
                 int column = y + j - current_radius;
                 if (row < 0)
-                    row = Grid::getGrid()->getRows() - 1;
-                else if (row == Grid::getGrid()->getRows())
+                    row = Grid::getGrid()->getSize() - 1;
+                else if (row == Grid::getGrid()->getSize())
                     row = 0;
                 if (column < 0)
-                    column = Grid::getGrid()->getColumns() - 1;
-                else if (column == Grid::getGrid()->getColumns())
+                    column = Grid::getGrid()->getSize() - 1;
+                else if (column == Grid::getGrid()->getSize())
                     column = 0;
-                if (Grid::getGrid()->getlistCells()[row][column].getState()->getIndex() != current_rule->getCurrent_config()->at(i*(current_radius*2+1)+j))
+                if (Grid::getGrid()->getCells()->at(Cell::getHashFromPos(row,column))->getState()->getIndex() != current_rule->getCurrent_config()->at(i*(current_radius*2+1)+j))
                     return 0;
             }
         }
@@ -230,21 +224,21 @@ unsigned int Automate::check_rule_ext(unsigned int x, unsigned int y, unsigned i
 
 void Automate::next_generation()
 {
-    cout<<"Calcul next generation :"<<endl;
+    cout<<"Next generation :"<<endl;
     // Initialize next_grid with values from current grid
-    unsigned int** next_grid = new unsigned int*[Grid::getGrid()->getRows()];
-        for (unsigned int i=0; i < Grid::getGrid()->getRows(); i++)
+    unsigned int** next_grid = new unsigned int*[Grid::getGrid()->getSize()];
+        for (unsigned int i=0; i < Grid::getGrid()->getSize(); i++)
         {
-            next_grid[i] = new unsigned int[Grid::getGrid()->getColumns()];
-            for (unsigned int j=0; j < Grid::getGrid()->getColumns(); j++)
-                next_grid[i][j] = Grid::getGrid()->getlistCells()[i][j].getState()->getIndex();
+            next_grid[i] = new unsigned int[Grid::getGrid()->getSize()];
+            for (unsigned int j=0; j < Grid::getGrid()->getSize(); j++)
+                next_grid[i][j] = Grid::getGrid()->getCells()->at(Cell::getHashFromPos(i,j))->getState()->getIndex();
         }
 
     // Check rules for each cell
         //Intentional rules
     if (this->model->getRule_int()->size())
-        for (unsigned int i=0; i < Grid::getGrid()->getRows(); i++){
-            for (unsigned int j=0; j < Grid::getGrid()->getColumns(); j++)
+        for (unsigned int i=0; i < Grid::getGrid()->getSize(); i++){
+            for (unsigned int j=0; j < Grid::getGrid()->getSize(); j++)
             {
                 for(unsigned int k = 0; k < this->model->getRule_int()->size(); k++)
                 {
@@ -255,8 +249,8 @@ void Automate::next_generation()
         }
         // Extensional rules
     if (this->model->getRule_ext()->size())
-        for (unsigned int i=0; i < Grid::getGrid()->getRows(); i++){
-            for (unsigned int j=0; j < Grid::getGrid()->getColumns(); j++)
+        for (unsigned int i=0; i < Grid::getGrid()->getSize(); i++){
+            for (unsigned int j=0; j < Grid::getGrid()->getSize(); j++)
             {
                 for(unsigned int k = 0; k < this->model->getRule_ext()->size(); k++)
                 {
@@ -266,11 +260,11 @@ void Automate::next_generation()
             }
         }
     // Put new values in Grid
-    for (unsigned int i=0; i < Grid::getGrid()->getRows(); i++)
+    for (unsigned int i=0; i < Grid::getGrid()->getSize(); i++)
     {
-        for (unsigned int j=0; j < Grid::getGrid()->getColumns(); j++)
+        for (unsigned int j=0; j < Grid::getGrid()->getSize(); j++)
         {
-            Grid::getGrid()->getlistCells()[i][j].setState(this->model->getListStates()->at(next_grid[i][j]));
+            Grid::getGrid()->getCells()->at(Cell::getHashFromPos(i,j))->setState(this->model->getListStates()->at(next_grid[i][j]));
         }
     }
 
@@ -281,8 +275,8 @@ void Automate::next_generation()
 
 void Automate::afficher_historique(int x)
 {
-    for (unsigned int i=0; i < Grid::getGrid()->getRows(); i++){
-        for (unsigned int j=0; j < Grid::getGrid()->getColumns(); j++)
+    for (unsigned int i=0; i < Grid::getGrid()->getSize(); i++){
+        for (unsigned int j=0; j < Grid::getGrid()->getSize(); j++)
             cout<<this->getHistoric()->at(x)[i][j]<<" ";
         cout<<endl;
         }
@@ -292,9 +286,9 @@ void Automate::afficher_historique(int x)
 void Automate::afficher_grid()
 {
     cout<<"Affichage grid :"<<endl;
-    for (unsigned int i=0; i < Grid::getGrid()->getRows(); i++){
-        for (unsigned int j=0; j < Grid::getGrid()->getColumns(); j++)
-            cout<<Grid::getGrid()->getlistCells()[i][j].getState()->getIndex()<<" ";
+    for (unsigned int i=0; i < Grid::getGrid()->getSize(); i++){
+        for (unsigned int j=0; j < Grid::getGrid()->getSize(); j++)
+            cout<<Grid::getGrid()->getCells()->at(Cell::getHashFromPos(i,j))->getState()->getIndex()<<" ";
         cout<<"\n";
     }
 }

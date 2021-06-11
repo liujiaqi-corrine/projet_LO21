@@ -48,7 +48,10 @@ class Model
         void add_Rule_int(Rule_int* new_rule_int);
         void add_Rule_ext(Rule_ext* new_rule_ext);
 
-        //QString getTitleAsQString() const{return QString::fromUtf8(this->title.c_str());}
+        QString getTitleAsQString() const{return QString::fromStdString(this->title);}
+        QString getDescriptionAsQString() const{return QString::fromStdString(this->description);}
+        QString getAuthorAsQString() const{return QString::fromStdString(this->author);}
+        QString getDateAsQString() const{return QString::fromStdString(this->date_creation);}
 
         friend class Library;
 };

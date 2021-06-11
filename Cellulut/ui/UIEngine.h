@@ -2,47 +2,28 @@
 #define UIENGINE_H
 
 #include "main.h"
-#include <QApplication>
-#include "data/interfaces/InsideDataForUI.h"
-#include "ui/interfaces/InsideUIForData.h"
 #include "views/MainWindow.h"
-#include "views/MainMenuView.h"
-#include "views/SimulationView.h"
-#include "views/SimulationViewV2.h"
-#include "views/templates/CreateTemplateView.h"
-#include "views/templates/LoadTemplateView.h"
+#include "views/menu/MainMenuView.h"
+#include "views/simulation/SimulationView.h"
+#include "views/forms/LoadModelFormView.h"
 
 class InsideDataForUI;
 class InsideUIForData;
 class MainWindow;
 
-class UIEngine
+class UIEngine : public QObject
 {
 private:
-    static const int width  = 800;
-    static const int height = 600;
-
-    InsideDataForUI* insideDataForUI;
-    InsideUIForData* insideUIForData;
-
     QApplication *qapp;
-
     MainWindow *mainWindow;
-
 public:
     UIEngine(QApplication *app);
-
-    InsideDataForUI* getInsideDataForUI()const{return this->insideDataForUI;}
-    void setInsideDataForUI(InsideDataForUI *_insideDataForUI){this->insideDataForUI=_insideDataForUI;}
-    InsideUIForData* getInsideUIForData()const{return this->insideUIForData;}
-    void setInsideUIForData(InsideUIForData *_insideUIForData){this->insideUIForData=_insideUIForData;}
-
     void start();
     void initMainWindow();
+public slots:
     void changeToMainMenuView();
     void changeToSimulationView();
-    void changeToCreateTemplateView();
-    void changeToLoadTemplateView();
+    void changeToLoadModelFormView();
 };
 
 #endif // UIENGINE_H

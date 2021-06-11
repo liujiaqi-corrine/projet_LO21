@@ -13,7 +13,6 @@ class Automate // Singleton
         Model* model = nullptr; //current_model
         vector<unsigned int**>* historic = new vector<unsigned int**>;
     public :
-        static Automate* getAutomate() noexcept {return singleton;}
         ~Automate() = default;
 
         Model* getModel() const;
@@ -21,7 +20,8 @@ class Automate // Singleton
 
         void setModel(Model* _model);
 
-        void init_Grid(unsigned int rows, unsigned int columns);
+        static Automate* getAutomate() noexcept {return singleton;}
+        void init_Grid(unsigned int size_grid);
 
         void save_current_config();
 

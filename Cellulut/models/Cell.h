@@ -22,6 +22,9 @@ class Cell
         void setX(int _x);
         void setY(int _y);
         void setState(State* _state);
+
+        string getHash() const;
+        static string getHashFromPos(int posX, int posY);
 };
 
 

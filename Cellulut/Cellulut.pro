@@ -12,14 +12,14 @@ SOURCES += \
     models/State.cpp \
     models/Surrounding.cpp \
     ui/UIEngine.cpp \
-    ui/interfaces/InsideUIForData.cpp \
-    ui/views/MainMenuView.cpp \
+    ui/UIUtils.cpp \
     ui/views/MainWindow.cpp \
-    ui/views/SimulationView.cpp \
-    ui/views/SimulationViewV2.cpp \
-    ui/views/grid/SimulationBoard.cpp \
-    ui/views/templates/CreateTemplateView.cpp \
-    ui/views/templates/LoadTemplateView.cpp
+    ui/views/forms/LoadModelFormView.cpp \
+    ui/views/menu/MainMenuView.cpp \
+    ui/views/simulation/SimulationButtonsBar.cpp \
+    ui/views/simulation/SimulationView.cpp \
+    ui/views/simulation/SimulationBoard.cpp \
+    ui/views/simulation/StatesDisplay.cpp
 
 HEADERS += \
     main.h \
@@ -32,20 +32,16 @@ HEADERS += \
     models/State.h \
     models/Surrounding.h \
     ui/UIEngine.h \
-    ui/interfaces/InsideUIForData.h \
-    ui/views/MainMenuView.h \
+    ui/UIUtils.h \
     ui/views/MainWindow.h \
-    ui/views/SimulationView.h \
-    ui/views/SimulationViewV2.h \
-    ui/views/grid/SimulationBoard.h \
-    ui/views/templates/CreateTemplateView.h \
-    ui/views/templates/LoadTemplateView.h
+    ui/views/forms/LoadModelFormView.h \
+    ui/views/menu/MainMenuView.h \
+    ui/views/simulation/SimulationButtonsBar.h \
+    ui/views/simulation/SimulationView.h \
+    ui/views/simulation/SimulationBoard.h \
+    ui/views/simulation/StatesDisplay.h
 
-FORMS += \
-    ui/views/MainMenuView.ui \
-    ui/views/MainWindow.ui \
-    ui/views/SimulationView.ui \
-    ui/views/templates/CreateTemplateView.ui \
-    ui/views/templates/LoadTemplateView.ui
+FORMS +=
 
-
+RESOURCES += \
+    Cellulut.qrc
