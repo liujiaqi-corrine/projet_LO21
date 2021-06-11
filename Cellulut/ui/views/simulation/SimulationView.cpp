@@ -88,7 +88,7 @@ void SimulationView::changeGridSize(int newValue){
 }
 
 void SimulationView::setupGridLayout(){
-    this->gridLayout->addWidget(createLabel("Configurer la simulation en cliquant sur la grille", "displayMessage", 14, true, true), 0, 2,1,4);
+    this->gridLayout->addWidget(UIUtils::createLabel("Configurer la simulation en cliquant sur la grille", 18, true, false), 0, 2,1,4);
     this->gridLayout->addWidget(this->modelTitle, 1, 0,1,2);
     this->gridLayout->addWidget(this->modelDescription, 2, 0,1,2);
     this->gridLayout->addWidget(this->modelAuthor, 3, 0);
@@ -103,7 +103,7 @@ void SimulationView::setupGridLayout(){
 }
 
 void SimulationView::setupLabelsForModel(){
-    this->modelTitle = createLabel(this->modelForSimulation->getTitleAsQString(), "modelTitle", 14, true, false);
+    this->modelTitle = createLabel(this->modelForSimulation->getTitleAsQString(), "modelTitle", 14, true, true);
     this->modelDescription = createLabel(this->modelForSimulation->getDescriptionAsQString(), "modelDescription", 10, false, true);
     this->modelAuthor = createLabel(this->modelForSimulation->getAuthorAsQString(), "modelAuthor", 10, false, false);
     this->modelDate = createLabel(this->modelForSimulation->getDateAsQString(), "modelDate", 10, false, false);
@@ -118,6 +118,7 @@ QLabel *SimulationView::createLabel(const QString &text, const QString &objectNa
     labelFont.setBold(isBold);
     labelFont.setItalic(isItalic);
     labelFont.setPointSize(fontSize);
+    labelFont.setFamily("Bahnschrift");
     label->setFont(labelFont);
 
     return label;

@@ -18,5 +18,6 @@ QFont UIUtils::getFont(int fontSize, bool isBold, bool isItalic, QFont::Capitali
     font.setBold(isBold);
     font.setItalic(isItalic);
     font.setCapitalization(cap);
+    font.setFamily("Bahnschrift");
     return font;
 }

@@ -2,16 +2,18 @@
 
 LoadModelFormView::LoadModelFormView(QWidget *parent, UIEngine *_uiEngine) : QWidget(parent), uiEngine(_uiEngine)
 {
-    this->instructionMessageLabel = UIUtils::createLabel(tr("Choisissez le modèle à utiliser pour la simulation"), 16, true, false);
+    this->instructionMessageLabel = UIUtils::createLabel(tr("Choisissez le modèle à utiliser pour la simulation"), 20, true, false);
 
     this->backButton = new QPushButton("Retourner au menu");
     this->backButton->setFixedHeight(150);
-    this->backButton->setFont(UIUtils::getFont(12,true,false,QFont::Capitalization::AllUppercase));
+    this->backButton->setFont(UIUtils::getFont(18,true,false,QFont::Capitalization::AllUppercase));
+    this->backButton->setStyleSheet("background-color : crimson; color: white;");
     this->nextButton = new QPushButton("Lancer la simulation");
     this->nextButton->setFixedHeight(150);
-    this->nextButton->setFont(UIUtils::getFont(12,true,false,QFont::Capitalization::AllUppercase));
+    this->nextButton->setFont(UIUtils::getFont(18,true,false,QFont::Capitalization::AllUppercase));
+    this->nextButton->setStyleSheet("background-color : crimson; color: white;");
 
-    this->modelComboLabel = UIUtils::createLabel(tr("Modèle :"), 14, false, false);
+    this->modelComboLabel = UIUtils::createLabel(tr("Modèle :"), 20, false, false);
 
     QStringList modelComboStringList;
     vector<Model*> *listOfModels = Library::getLibrary()->getListModels();
