@@ -12,17 +12,19 @@
 class StatesDisplay : public QWidget
 {
     Q_OBJECT
-public:
-    StatesDisplay(QWidget *parent = nullptr);
-    ~StatesDisplay();
-public slots:
-    void refreshCounters();
-private:
-    QGridLayout *layout;
+    public:
+        StatesDisplay(QWidget *parent = nullptr);
+        ~StatesDisplay();
 
-    map<int, QWidget*> *mapOfColors;
-    map<int, QLabel*> *mapOfLabels;
-    map<int, QLCDNumber*> *mapOfCounts;
+    public slots:
+        void refreshCounters();
+
+    private:
+        QGridLayout *layout;
+
+        map<int, QWidget*> *mapOfColors;
+        map<int, QLabel*> *mapOfLabels;
+        map<int, QLCDNumber*> *mapOfCounts;
 };
 
 #endif // STATESDISPLAY_H

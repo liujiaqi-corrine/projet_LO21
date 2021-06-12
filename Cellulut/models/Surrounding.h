@@ -23,7 +23,6 @@ class Surrounding
         void setRadius(unsigned int _radius);
         void setInteraction(vector<bool>* _interaction);
 
-        void afficher_surround();
         void addInteraction(vector<bool> _interactionLine);
 
         friend class Library;

@@ -17,6 +17,7 @@ SOURCES += \
     ui/views/forms/LoadModelFormView.cpp \
     ui/views/menu/MainMenuView.cpp \
     ui/views/simulation/SimulationButtonsBar.cpp \
+    ui/views/simulation/SimulationThread.cpp \
     ui/views/simulation/SimulationView.cpp \
     ui/views/simulation/SimulationBoard.cpp \
     ui/views/simulation/StatesDisplay.cpp
@@ -37,6 +38,7 @@ HEADERS += \
     ui/views/forms/LoadModelFormView.h \
     ui/views/menu/MainMenuView.h \
     ui/views/simulation/SimulationButtonsBar.h \
+    ui/views/simulation/SimulationThread.h \
     ui/views/simulation/SimulationView.h \
     ui/views/simulation/SimulationBoard.h \
     ui/views/simulation/StatesDisplay.h

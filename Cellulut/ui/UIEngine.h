@@ -13,17 +13,25 @@ class MainWindow;
 
 class UIEngine : public QObject
 {
-private:
-    QApplication *qapp;
-    MainWindow *mainWindow;
-public:
-    UIEngine(QApplication *app);
-    void start();
-    void initMainWindow();
-public slots:
-    void changeToMainMenuView();
-    void changeToSimulationView();
-    void changeToLoadModelFormView();
+    private:
+        QApplication *qapp;
+        MainWindow *mainWindow;
+
+    public:
+        UIEngine(QApplication *app);
+
+        void startEngine();
+
+        void initMainWindow();
+
+    public slots:
+        void changeToMainMenuView();
+
+        void changeToSimulationView();
+
+        void changeToLoadModelFormView();
+
+        void openCreateModelFormView();
 };
 
 #endif // UIENGINE_H

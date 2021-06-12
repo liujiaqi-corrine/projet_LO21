@@ -7,27 +7,38 @@ UIEngine::UIEngine(QApplication* _app) : qapp(_app)
     qInfo() << "UIEngine::UIEngine - constructor";
 }
 
-void UIEngine::start(){
+void UIEngine::startEngine()
+{
     this->initMainWindow();
     this->changeToMainMenuView();
     this->mainWindow->show();
 }
 
-void UIEngine::initMainWindow(){
+void UIEngine::initMainWindow()
+{
     this->mainWindow->setWindowTitle("Cellulut");
 }
 
-void UIEngine::changeToSimulationView(){
+void UIEngine::changeToSimulationView()
+{
     SimulationView *simulationView = new SimulationView(0, this);
     this->mainWindow->setCentralWidget(simulationView);
 }
 
-void UIEngine::changeToMainMenuView(){
+void UIEngine::changeToMainMenuView()
+{
     MainMenuView *mainMenuView = new MainMenuView(0, this);
     this->mainWindow->setCentralWidget(mainMenuView);
 }
 
-void UIEngine::changeToLoadModelFormView(){
+void UIEngine::changeToLoadModelFormView()
+{
     LoadModelFormView *loadModelFormView = new LoadModelFormView(0, this);
     this->mainWindow->setCentralWidget(loadModelFormView);
 }
+
+void UIEngine::openCreateModelFormView()
+{
+
+}
+

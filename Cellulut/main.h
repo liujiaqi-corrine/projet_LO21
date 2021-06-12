@@ -4,10 +4,13 @@
 #define MAX_STATE 8
 
 #define MIN_GRID_SIZE 5
-#define MAX_GRID_SIZE 79
+#define MAX_GRID_SIZE 250
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
+
+#define MIN_SIMULATION_TICK 1000
+#define MAX_SIMULATION_SPEED 4
 
 using namespace std;
 
@@ -42,6 +45,8 @@ using namespace std;
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QToolButton>
+#include <QThread>
+#include <QMutex>
 
 #include "ui/UIUtils.h"
 

@@ -5,5 +5,6 @@
         <file alias="step-forward.svg">ui/icons/solid/step-forward.svg</file>
         <file alias="forward.svg">ui/icons/solid/forward.svg</file>
         <file alias="stop.svg">ui/icons/solid/stop.svg</file>
+        <file alias="backward.svg">ui/icons/solid/backward.svg</file>
     </qresource>
 </RCC>
