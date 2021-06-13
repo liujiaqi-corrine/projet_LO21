@@ -5,6 +5,16 @@
 #include "models/Model.h"
 #include "models/Surrounding.h"
 
+/*!
+ *  \file Library.h
+ *  This file contains the Library class
+ */
+
+
+/*!
+ * \brief The Library class
+ */
+
 class Library // Singleton
 {
     protected :
@@ -22,7 +32,7 @@ class Library // Singleton
         vector<Surrounding*>* getListSurroundings() const;
         vector<Model*>* getListModels() const;
 
-        void create_Surrounding(string _name);
+        Surrounding* create_Surrounding(string _name);
         Surrounding* get_Surrounding(unsigned int surrounding_id);
         void del_Surrounding(unsigned int surrounding_id);
 

@@ -51,6 +51,8 @@ using namespace std;
 #include <QFormLayout>
 #include <QSpinBox>
 #include <QtWidgets>
+#include <QSpinBox>
+#include <QGroupBox>
 
 #include "ui/UIUtils.h"
 

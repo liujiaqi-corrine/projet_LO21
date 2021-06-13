@@ -3,6 +3,17 @@
 
 #include "main.h"
 
+/*!
+ *  \file Rule.h
+ *  This file contains Rule_int and Rule_ext classes
+ */
+
+
+/*!
+ * \brief The Rule_int class
+ */
+
+
 // Rule_int = (A, B, C, D)
 // Si la cellule est dans l'état A, qu'elle a B voisins dans l'état C, alors elle devient D
 class Rule_int
@@ -23,6 +34,10 @@ class Rule_int
         void setRule_state_nearby(unsigned int _state_nearby);
         void setRule_next_state(unsigned int _next_state);
 };
+
+/*!
+ * \brief The Rule_ext class
+ */
 
 class Rule_ext
 {

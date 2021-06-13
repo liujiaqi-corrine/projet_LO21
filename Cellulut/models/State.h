@@ -3,6 +3,16 @@
 
 #include "main.h"
 
+/*!
+ *  \file State.h
+ *  This file contains the State class
+ */
+
+
+/*!
+ * \brief The State class
+ */
+
 class State
 {
 protected :

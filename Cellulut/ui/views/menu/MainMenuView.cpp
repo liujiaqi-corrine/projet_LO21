@@ -19,7 +19,8 @@ MainMenuView::MainMenuView(QWidget *_parent, UIEngine *_uiEngine) : QWidget(_par
     this->gridLayout->addWidget(this->createModelButton,1,1,1,1);
     this->setLayout(gridLayout);
 
-    connect(this->editLibraryButton, &QPushButton::clicked, this, &MainMenuView::editLibrary);
+    //connect(this->editLibraryButton, &QPushButton::clicked, this, &MainMenuView::editLibrary);
+    connect(this->editLibraryButton, &QPushButton::clicked, this->uiEngine, &UIEngine::changeToLibraryView);
     connect(this->createModelButton, &QPushButton::clicked, this, &MainMenuView::addModel);
 
     qInfo() << "MainMenuView::MainMenuView - constructor";
@@ -67,8 +68,7 @@ void MainMenuView::editLibrary()
     connect(addModelButton, &QPushButton::clicked, this, &MainMenuView::addModel);
     connect(addModelButton,&QPushButton::clicked,this->editLibraryMenu,&QDialog::close);
     connect(delModelButton, &QPushButton::clicked, this, &MainMenuView::delModel);
-    connect(addSurroundingButton, &QPushButton::clicked, this, &MainMenuView::addSurrounding);
-    connect(delSurroundingButton, &QPushButton::clicked, this, &MainMenuView::delSurrounding);
+    connect(addSurroundingButton, &QPushButton::clicked, this->uiEngine, &UIEngine::changeToCreateSurroundingFormView);
     return;
 }
 
@@ -109,91 +109,214 @@ void MainMenuView::addModel()
 
 void MainMenuView::addState()
 {
-    if (this->states_added == nb_states->value())
+    if (!this->states_added)
+        Library::getLibrary()->create_Model(this->model_name->text().toStdString()); // Adding model to library
+
+    else if(this->states_added > 0)
+        Library::getLibrary()->getListModels()->at(Library::getLibrary()->getListModels()->size()-1)->add_State(new State(states_added-1, this->state_label->text().toStdString(), this->colorsCombo->currentText().toStdString())); // State dead added
+
+    if (this->states_added == this->nb_states->value())
         return;
 
     QPushButton *next = new QPushButton("Next");
 
+    QHBoxLayout *controlButtons = new QHBoxLayout;
+    controlButtons->addWidget(next);
+
+    this->states_added += 1;
+    this->state_label = new QLineEdit;
+
+    this->colorsCombo = new QComboBox();
+    this->colorsCombo->addItem("white");
+    this->colorsCombo->addItem("red");
+    this->colorsCombo->addItem("orange");
+    this->colorsCombo->addItem("yellow");
+    this->colorsCombo->addItem("green");
+    this->colorsCombo->addItem("blue");
+    this->colorsCombo->addItem("violet");
+    this->colorsCombo->addItem("black");
+
+    QFormLayout *form = new QFormLayout;
+    form->addRow("Label:", state_label);
+    form->addRow("Couleur:", colorsCombo);
+
     QVBoxLayout *addStateLayout = new QVBoxLayout;
-    //addStateLayout->addLayout(form);
-    addStateLayout->addWidget(next);
+    addStateLayout->addLayout(form);
+    addStateLayout->addLayout(controlButtons);
 
     this->addStateMenu = new QDialog(this);
     this->addStateMenu->setWindowTitle("New state");
     this->addStateMenu->setModal(true);
-    this->addModelMenu->setLayout(addStateLayout);
+    this->addStateMenu->setLayout(addStateLayout);
     this->addStateMenu->show();
 
-    this->states_added += 1;
 
     QObject::connect(next,&QPushButton::clicked,this,&MainMenuView::addState);
-
-    /*//Creation du Modele selon les infos récupérés dans defineState
-    if(added==0)
-        Library::getLibrary()->create_Model(nom->text().toStdString()); //Le modele est ajouté à la fin de la liste
-
-
-    //Ajout de l'Etat récupérés dans l'appel à defineStates précedent
-    if(added>0)     Library::getLibrary()->getListModels()->at(Library::getLibrary()->getListModels()->size()-1)->add_State(new State(added-1, label->text().toStdString(), nom->text().toStdString())); // State dead added
-
-
-    if (added==nb->value())
-        return;
-
-    added++;
-
-    label = new QLineEdit;
-    nom = new QLineEdit("black");
-
-    QPushButton *suivant = new QPushButton("Suivant");
-
-    QFormLayout *form = new QFormLayout;
-        form->addRow("label:", label);
-        form->addRow("Couleur:", nom);
-
-    QVBoxLayout *vertical = new QVBoxLayout;
-        vertical->addLayout(form);
-        vertical->addWidget(suivant);
-
-    label->setText(QString::number(added-1));
-
-    infos = new QDialog(this);
-        QString concat = "Definir Etat n°" + QString::number(added);
-        infos->setWindowTitle(concat);
-        infos->setModal(true);
-        infos->setLayout(vertical);
-        infos->show();
-
-    QObject::connect(suivant,&QPushButton::clicked,this,&MainMenuView::addState);
-    QObject::connect(suivant,&QPushButton::clicked,infos,&QDialog::close);*/
-
+    if (this->states_added == this->nb_states->value())
+        QObject::connect(next,&QPushButton::clicked,this,&MainMenuView::setSurrounding);
+    QObject::connect(next,&QPushButton::clicked,this->addStateMenu,&QDialog::close);
 }
 
+void MainMenuView::setSurrounding()
+{
+    QStringList surroundingComboStringList;
+    vector<Surrounding*> *listOfSurroundings = Library::getLibrary()->getListSurroundings();
+    for(unsigned int i = 0; i < listOfSurroundings->size(); i++){
+        surroundingComboStringList << listOfSurroundings->at(i)->getNameAsQString();
+    }
+
+    QPushButton *confirm = new QPushButton("Confirm");
+
+    QHBoxLayout *controlButtons = new QHBoxLayout;
+    controlButtons->addWidget(confirm);
+
+    this->surroundingComboModel = new QStringListModel();
+    this->surroundingComboModel->setStringList(surroundingComboStringList);
+
+    this->surroundingCombo = new QComboBox();
+    this->surroundingCombo->setModel(surroundingComboModel);
+
+    QFormLayout *form = new QFormLayout;
+    form->addRow("Chose surrounding :", surroundingCombo);
+
+    QVBoxLayout *setSurroundingLayout = new QVBoxLayout;
+    setSurroundingLayout->addLayout(form);
+    setSurroundingLayout->addLayout(controlButtons);
+
+    this->setSurroundingMenu = new QDialog(this);
+    this->setSurroundingMenu->setWindowTitle("Surrounding choice");
+    this->setSurroundingMenu->setModal(true);
+    this->setSurroundingMenu->setLayout(setSurroundingLayout);
+    this->setSurroundingMenu->show();
+
+    QObject::connect(confirm,&QPushButton::clicked,this->setSurroundingMenu,&QDialog::close);
+    QObject::connect(confirm,&QPushButton::clicked,this,&MainMenuView::onClickSubmitSetSurrounding);
+    QObject::connect(confirm,&QPushButton::clicked,this,&MainMenuView::addRule);
+}
+
+void MainMenuView::onClickSubmitSetSurrounding()
+{
+    int selectedSurrounding = this->surroundingCombo->currentIndex();
+    Library::getLibrary()->get_Model(Library::getLibrary()->getListModels()->size()-1)->setSurrounding(Library::getLibrary()->getListSurroundings()->at(selectedSurrounding));
+    qInfo() << "Surrounding set on "<< Library::getLibrary()->getListSurroundings()->at(selectedSurrounding)->getNameAsQString();
+}
+
+void MainMenuView::addRule()
+{
+    QPushButton *cancel = new QPushButton("Return");
+    QPushButton *add_rule = new QPushButton("Add rule");
+
+    QHBoxLayout *controlButtons = new QHBoxLayout;
+    controlButtons->addWidget(cancel);
+    controlButtons->addWidget(add_rule);
+
+    QStringList stateComboStringList;
+    vector<State*> *listOfStates = Library::getLibrary()->get_Model(Library::getLibrary()->getListModels()->size()-1)->getListStates();
+    for(unsigned int i = 0; i < listOfStates->size(); i++){
+        stateComboStringList << listOfStates->at(i)->getLabelAsQString();
+    }
+
+    this->currentStateComboModel = new QStringListModel();
+    this->currentStateComboModel->setStringList(stateComboStringList);
+
+    this->currentStateCombo = new QComboBox();
+    this->currentStateCombo->setModel(currentStateComboModel);
+
+    this->nb_states_nearby = new QSpinBox;
+    this->nb_states_nearby->setMinimum(0);
+    this->nb_states_nearby->setMaximum(8);
+
+    this->stateNearbyComboModel = new QStringListModel();
+    this->stateNearbyComboModel->setStringList(stateComboStringList);
+
+    this->stateNearbyCombo = new QComboBox();
+    this->stateNearbyCombo->setModel(stateNearbyComboModel);
+
+    this->nextStateComboModel = new QStringListModel();
+    this->nextStateComboModel->setStringList(stateComboStringList);
+
+    this->nextStateCombo = new QComboBox();
+    this->nextStateCombo->setModel(nextStateComboModel);
+
+    QFormLayout *form = new QFormLayout;
+    form->addRow("Si la cellule est dans l'état:", currentStateCombo);
+    form->addRow("Qu'elle a :", nb_states_nearby);
+    form->addRow("Voisins dans l'état :", stateNearbyCombo);
+    form->addRow("Alors elle devient :", nextStateCombo);
+
+    QVBoxLayout *addRuleLayout = new QVBoxLayout;
+    addRuleLayout->addLayout(form);
+    addRuleLayout->addLayout(controlButtons);
+
+
+    this->addRuleMenu = new QDialog(this);
+    this->addRuleMenu->setWindowTitle("New rule");
+    this->addRuleMenu->setModal(true);
+    this->addRuleMenu->setLayout(addRuleLayout);
+    this->addRuleMenu->show();
+
+    QObject::connect(add_rule,&QPushButton::clicked,this,&MainMenuView::onClickSubmitAddRule);
+    QObject::connect(add_rule,&QPushButton::clicked,this,&MainMenuView::addRule);
+    QObject::connect(add_rule,&QPushButton::clicked,this->addRuleMenu,&QDialog::close);
+    QObject::connect(cancel,&QPushButton::clicked,this->addRuleMenu,&QDialog::close);
+}
+
+void MainMenuView::onClickSubmitAddRule()
+{
+    int A = this->currentStateCombo->currentIndex();
+    int B = this->nb_states_nearby->value();
+    int C = this->stateNearbyCombo->currentIndex();
+    int D = this->nextStateCombo->currentIndex();
+    qInfo() << A << this->currentStateCombo->currentIndex();
+    Rule_int* new_rule = new Rule_int(A, B, C, D);
+    Library::getLibrary()->get_Model(Library::getLibrary()->getListModels()->size()-1)->add_Rule_int(new_rule);
+}
 
 void MainMenuView::delModel()
 {
+
+    QStringList modelComboStringList;
+    vector<Model*> *listOfModels = Library::getLibrary()->getListModels();
+    for(unsigned int i = 3; i < listOfModels->size(); i++){
+        modelComboStringList << listOfModels->at(i)->getTitleAsQString();
+    }
+
+    QPushButton *cancel = new QPushButton("Return");
+    QPushButton *confirm = new QPushButton("Confirm");
+
+    this->modelComboModel = new QStringListModel();
+    this->modelComboModel->setStringList(modelComboStringList);
+
+    this->modelCombo = new QComboBox();
+    this->modelCombo->setModel(modelComboModel);
+    this->modelCombo->setToolTip("Impossible de supprimer les modèles pré-existants");
+
+    QFormLayout *form = new QFormLayout;
+    form->addRow("Delete model :", modelCombo);
+
+    QHBoxLayout *controlButtons = new QHBoxLayout;
+    controlButtons->addWidget(cancel);
+    controlButtons->addWidget(confirm);
+
+    QVBoxLayout *delModelLayout = new QVBoxLayout;
+    delModelLayout->addLayout(form);
+    delModelLayout->addLayout(controlButtons);
+
     this->delModelMenu = new QDialog(this);
-    this->delModelMenu->setWindowTitle("Suppression d'un modèle");
+    this->delModelMenu->setWindowTitle("Deleting model");
     this->delModelMenu->setModal(true);
-    //delModelMenu->setLayout(delModelLayout);
+    delModelMenu->setLayout(delModelLayout);
     this->delModelMenu->show();
+
+    QObject::connect(cancel,&QPushButton::clicked,this->delModelMenu,&QDialog::close);
+    QObject::connect(confirm,&QPushButton::clicked,this->delModelMenu,&QDialog::close);
+    QObject::connect(confirm,&QPushButton::clicked,this,&MainMenuView::onClickSubmitDelModel);
 }
 
-void MainMenuView::addSurrounding()
+void MainMenuView::onClickSubmitDelModel()
 {
-    this->addSurroundingMenu = new QDialog(this);
-    this->addSurroundingMenu->setWindowTitle("Ajout d'un voisinage");
-    this->addSurroundingMenu->setModal(true);
-    //addSurroundingMenu->setLayout(addSurroundingLayout);
-    this->addSurroundingMenu->show();
+    int selectedModel = this->modelCombo->currentIndex();
+    Library::getLibrary()->del_Model(Library::getLibrary()->getListModels()->at(selectedModel)->getId_Model());
 }
 
-void MainMenuView::delSurrounding()
-{
-    this->delSurroundingMenu = new QDialog(this);
-    this->delSurroundingMenu->setWindowTitle("Suppression d'un voisinage");
-    this->delSurroundingMenu->setModal(true);
-    //delSurroundingMenu->setLayout(delSurroundingLayout);
-    this->delSurroundingMenu->show();
-}
 

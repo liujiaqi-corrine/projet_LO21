@@ -33,16 +33,20 @@ map<int,int> Grid::countNbCellsPerState(){
     for(map<std::string, Cell*>::iterator itr = this->mapCells->begin(); itr != this->mapCells->end(); itr++)
     {
         Cell *cell = itr->second;
-        int stateIndex = cell->getState()->getIndex();
+        int stateIndex = cell->getState()->getIndex();;
         int nbStates;
-        if(nbCellsPerState.count(stateIndex) == 0){
-            nbStates = 1;
-        } else {
-            nbStates = nbCellsPerState.at(stateIndex);
-            nbStates++;
+        if ( nbCellsPerState.find(stateIndex) == nbCellsPerState.end() )
+        {
+            nbCellsPerState.insert ( std::make_pair(stateIndex,1) );
         }
-        nbCellsPerState.insert({stateIndex,nbStates});
-        cout<<nbStates<<endl;
+        else
+        {
+            nbStates = nbCellsPerState.at(stateIndex);
+            nbStates = nbStates + 1;
+            nbCellsPerState.erase(stateIndex);
+            nbCellsPerState.insert ( std::make_pair(stateIndex,nbStates) );
+        }
+
     }
 
     return nbCellsPerState;

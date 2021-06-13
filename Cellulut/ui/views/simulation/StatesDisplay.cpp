@@ -28,7 +28,7 @@ StatesDisplay::StatesDisplay(QWidget *parent) :QWidget(parent)
         this->layout->addWidget(labelWidget,i,1);
 
         // State count
-        QLCDNumber *stateCount = new QLCDNumber(3);
+        QLCDNumber *stateCount = new QLCDNumber(5);
         stateCount->setSegmentStyle(QLCDNumber::Filled);
         this->mapOfCounts->insert({i,stateCount});
         this->layout->addWidget(stateCount,i,2);
@@ -42,11 +42,11 @@ StatesDisplay::~StatesDisplay()
 }
 
 void StatesDisplay::refreshCounters(){
-    /*map<int,int> mapNbCellsPerState = Grid::getGrid()->countNbCellsPerState();
-    for(map<int, QLCDNumber*>::iterator itr = this->mapOfCounts->begin(); itr != this->mapOfCounts->end(); itr++)
+    std::map<int,int> mapNbCellsPerState = Grid::getGrid()->countNbCellsPerState();
+    for(std::map<int, QLCDNumber*>::iterator itr = this->mapOfCounts->begin(); itr != this->mapOfCounts->end(); itr++)
     {
         int stateIndex = itr->first;
         int nbOfStates = mapNbCellsPerState.count(stateIndex) == 0 ? 0 : mapNbCellsPerState.at(stateIndex);
         itr->second->display(QString::number(nbOfStates));
-    }*/
+    }
 }

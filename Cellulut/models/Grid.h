@@ -4,6 +4,16 @@
 #include "main.h"
 #include "models/Cell.h"
 
+/*!
+ *  \file Grid.h
+ *  This file contains the Grid class
+ */
+
+
+/*!
+ * \brief The Grid class
+ */
+
 class Grid // Singleton
 {
     protected :

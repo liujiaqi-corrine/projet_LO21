@@ -4,7 +4,7 @@ LoadModelFormView::LoadModelFormView(QWidget *parent, UIEngine *_uiEngine) : QWi
 {
     this->instructionMessageLabel = UIUtils::createLabel(tr("Choose a model to use for the simulation"), 20, true, false);
 
-    this->backButton = new QPushButton("Edit this model");
+    this->backButton = new QPushButton("Return to main menu");
     this->backButton->setFixedHeight(150);
     this->backButton->setFont(UIUtils::getFont(15,true,false,QFont::Capitalization::AllUppercase));
     this->backButton->setStyleSheet("background-color : crimson; color: white;");

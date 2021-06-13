@@ -4,7 +4,7 @@ MainWindow::MainWindow(QWidget *parent, UIEngine *_uiEngine) :
     QMainWindow(parent),
     uiEngine(_uiEngine)
 {
-    this->setFixedSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+    this->resize(WINDOW_WIDTH, WINDOW_HEIGHT);
 
     mainMenuAct = new QAction(tr("&Main menu"), this);
     mainMenuAct->setStatusTip(tr("Go to main menu"));

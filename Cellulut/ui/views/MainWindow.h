@@ -4,11 +4,20 @@
 #include "main.h"
 #include "ui/UIEngine.h"
 
+/*!
+ *  \file MainWindow.h
+ *  This file contains the MainWindow class
+ */
+
 namespace Ui {
 class MainWindow;
 }
 
 class UIEngine;
+
+/*!
+ * \brief The MainWindow class
+ */
 
 class MainWindow : public QMainWindow
 {

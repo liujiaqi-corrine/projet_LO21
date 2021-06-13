@@ -4,6 +4,16 @@
 #include "main.h"
 #include "models/State.h"
 
+/*!
+ *  \file Cell.h
+ *  This file contains the Cell class
+ */
+
+
+/*!
+ * \brief The Cell class
+ */
+
 class Cell
 {
     protected :

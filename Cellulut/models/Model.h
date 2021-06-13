@@ -6,6 +6,16 @@
 #include "models/State.h"
 #include "models/Surrounding.h"
 
+/*!
+ *  \file Model.h
+ *  This file contains the Model class
+ */
+
+
+/*!
+ * \brief The Model class
+ */
+
 class Model
 {
     protected :

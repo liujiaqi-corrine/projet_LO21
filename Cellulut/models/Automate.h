@@ -5,6 +5,16 @@
 #include "models/Model.h"
 #include "models/Grid.h"
 
+/*!
+ *  \file Automate.h
+ *  This file contains the Automate class
+ */
+
+
+/*!
+ * \brief The Automate class
+ */
+
 class Automate // Singleton
 {
     protected :

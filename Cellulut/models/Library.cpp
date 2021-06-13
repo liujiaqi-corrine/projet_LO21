@@ -8,24 +8,13 @@ vector<Surrounding*>* Library::getListSurroundings() const{return this->listSurr
 vector<Model*>* Library::getListModels() const{return this->listModels;}
 
 
-void Library::create_Surrounding(string _name)
+Surrounding* Library::create_Surrounding(string _name)
 {
     Surrounding* new_surrounding = new Surrounding(this->listSurroundings->size(), _name);
     this->listSurroundings->push_back(new_surrounding);
     cout<<"Create Surrounding '"<<new_surrounding->getName()<<"' with index "<<new_surrounding->getId_Surrounding()<<endl;
 
-    /*for(unsigned int i = 0; i < listSurroundings->size(); i++)
-    {
-        if(listSurroundings->at(i)->getId_Surrounding() == new_surrounding->getId_Surrounding())
-        {
-            //throw invalid_argument("Surrounding index already exists, index : " + to_string(new_surrounding->getId_Surrounding()));
-            cout<<"Surrounding index already exists"<<endl;
-            return;
-        }
-    }
-    this->listSurroundings->push_back(new_surrounding);
-    cout<<"Surrounding added"<<endl;
-    return;*/
+    return new_surrounding;
 }
 
 Surrounding* Library::get_Surrounding(unsigned int surrounding_id)
@@ -37,23 +26,29 @@ Surrounding* Library::get_Surrounding(unsigned int surrounding_id)
             return listSurroundings->at(i);
         }
     }
-    cout<<"This surrounding doesn't exist";
+    qInfo() <<"This surrounding doesn't exist";
     return nullptr;
 }
 
 void Library::del_Surrounding(unsigned int surrounding_id)
 {
-    /*for(unsigned int i = 0; i < listSurroundings->size(); i++)
+    if (surrounding_id > Library::getLibrary()->getListSurroundings()->size() - 1)
     {
-        if(listSurroundings->at(i) == _surrounding)
-        {
-            listSurroundings->erase(listSurroundings->begin()+i);
-            cout<<"Surrounding deleted"<<endl;
-            return;
-        }
+        cout<<"This surrounding doesn't exist"<<endl;
     }
-    cout<<"This surrounding doesn't exist";
-    return;*/
+    else if (surrounding_id == 0 or surrounding_id == 1)
+    {
+        cout<<"You can't delete pre-existing surrounding"<<endl;
+    }
+    else {
+        for(unsigned int i=surrounding_id; i < getLibrary()->getListSurroundings()->size(); i++)
+        {
+            this->getListSurroundings()->at(i)->id_surrounding--;
+        }
+        cout<<"Surrounding '"<<this->getListSurroundings()->at(surrounding_id)->getName()<<"' deleted"<<endl;
+        this->listSurroundings->erase(this->listSurroundings->begin()+surrounding_id);
+    }
+    return;
 }
 
 
