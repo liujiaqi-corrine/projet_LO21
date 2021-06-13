@@ -2,18 +2,18 @@
 
 LoadModelFormView::LoadModelFormView(QWidget *parent, UIEngine *_uiEngine) : QWidget(parent), uiEngine(_uiEngine)
 {
-    this->instructionMessageLabel = UIUtils::createLabel(tr("Choisissez le modèle à utiliser pour la simulation"), 20, true, false);
+    this->instructionMessageLabel = UIUtils::createLabel(tr("Choose a model to use for the simulation"), 20, true, false);
 
-    this->backButton = new QPushButton("Modifier ce modèle");
+    this->backButton = new QPushButton("Edit this model");
     this->backButton->setFixedHeight(150);
     this->backButton->setFont(UIUtils::getFont(15,true,false,QFont::Capitalization::AllUppercase));
     this->backButton->setStyleSheet("background-color : crimson; color: white;");
-    this->nextButton = new QPushButton("Lancer la simulation\nsur ce modèle");
+    this->nextButton = new QPushButton("Start simulation\n on this model");
     this->nextButton->setFixedHeight(150);
     this->nextButton->setFont(UIUtils::getFont(15,true,false,QFont::Capitalization::AllUppercase));
     this->nextButton->setStyleSheet("background-color : crimson; color: white;");
 
-    this->modelComboLabel = UIUtils::createLabel(tr("Modèle :"), 20, false, false);
+    this->modelComboLabel = UIUtils::createLabel(tr("Model :"), 20, false, false);
 
     QStringList modelComboStringList;
     vector<Model*> *listOfModels = Library::getLibrary()->getListModels();

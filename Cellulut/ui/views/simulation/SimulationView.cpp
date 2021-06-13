@@ -38,7 +38,7 @@ SimulationView::SimulationView(QWidget *parent, UIEngine *_uiEngine) : QWidget(p
     setStyleSheet(tr(this->styleSheet));
 
     // Random configuration button
-    this->randomInitializationButton = new QPushButton("Initialisation aléatoire");
+    this->randomInitializationButton = new QPushButton("Random initialization");
     this->randomInitializationButton->setFont(UIUtils::getFont(12,false,false));
 
     // Automatic simulation
@@ -118,7 +118,7 @@ void SimulationView::changeGridSize(int newValue){
 }
 
 void SimulationView::setupGridLayout(){
-    this->gridLayout->addWidget(UIUtils::createLabel("Configurer la simulation\nen cliquant sur la grille", 15, true, false), 0, 2,1,4);
+    this->gridLayout->addWidget(UIUtils::createLabel("Configure the simulation\nby clicking on the grid", 15, true, false), 0, 2,1,4);
     this->gridLayout->addWidget(this->modelTitle, 1, 0,1,2);
     this->gridLayout->addWidget(this->modelDescription, 2, 0,1,2);
     this->gridLayout->addWidget(this->modelAuthor, 3, 0);
@@ -127,7 +127,7 @@ void SimulationView::setupGridLayout(){
     this->gridLayout->addWidget(this->sliderSize, 6, 0, 1,2);
     this->gridLayout->addWidget(this->randomInitializationButton, 7, 0, 1, 2);
     this->gridLayout->addWidget(this->board, 1, 2, 7, 4);
-    this->gridLayout->addWidget(createLabel("Etats :", "states", 12, false, false), 1, 6,1,2);
+    this->gridLayout->addWidget(createLabel("States :", "states", 12, false, false), 1, 6,1,2);
     this->gridLayout->addWidget(this->statesDisplay, 2,6,6,2);
     this->gridLayout->addWidget(this->simulationButtonsBar, 7,2,1,4);
     this->gridLayout->addWidget(this->simulationSpeed, 7,6,1,2);

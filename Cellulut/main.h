@@ -48,6 +48,9 @@ using namespace std;
 #include <QToolButton>
 #include <QThread>
 #include <QMutex>
+#include <QFormLayout>
+#include <QSpinBox>
+#include <QtWidgets>
 
 #include "ui/UIUtils.h"
 

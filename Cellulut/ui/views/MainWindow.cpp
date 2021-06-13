@@ -6,14 +6,14 @@ MainWindow::MainWindow(QWidget *parent, UIEngine *_uiEngine) :
 {
     this->setFixedSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 
-    mainMenuAct = new QAction(tr("&Menu principal"), this);
-    mainMenuAct->setStatusTip(tr("Aller au menu principal"));
+    mainMenuAct = new QAction(tr("&Main menu"), this);
+    mainMenuAct->setStatusTip(tr("Go to main menu"));
 
-    loadModelAct = new QAction(tr("&Charger un modèle"), this);
-    loadModelAct->setStatusTip(tr("Charger un modèle pour la simulation"));
+    loadModelAct = new QAction(tr("&Load model"), this);
+    loadModelAct->setStatusTip(tr("Load a model for the simulation"));
 
     simulationAct = new QAction(tr("&Simulation"), this);
-    simulationAct->setStatusTip(tr("Aller à la vue Simulation"));
+    simulationAct->setStatusTip(tr("Go to the simulation"));
 
     this->menuBar()->addAction(mainMenuAct);
     this->menuBar()->addAction(loadModelAct);
