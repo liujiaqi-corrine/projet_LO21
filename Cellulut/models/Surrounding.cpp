@@ -28,6 +28,21 @@ void Surrounding::setRadius(unsigned int _radius){this->radius = _radius;}
 
 void Surrounding::setInteraction(vector<bool>*_interaction){this->interaction = _interaction;}
 
+void Surrounding::afficher_surround()
+{
+    unsigned int size = this->radius * 2 + 1;
+    for (unsigned int i = 0; i < size; i++)
+    {
+        for (unsigned int j = 0; j < size; j++)
+        {
+            if (this->interaction->at(i*size+j))
+                cout<<"True ";
+            else
+                cout<<"False ";
+        }
+        cout << endl;
+    }
+}
 
 void Surrounding::addInteraction(vector<bool> _interactionLine){
     for(unsigned int i = 0; i < _interactionLine.size() ; i++){

@@ -2,13 +2,13 @@
 
 LoadModelFormView::LoadModelFormView(QWidget *parent, UIEngine *_uiEngine) : QWidget(parent), uiEngine(_uiEngine)
 {
-    this->instructionMessageLabel = UIUtils::createLabel(tr("Choisissez le modèle : "), 20, true, false);
+    this->instructionMessageLabel = UIUtils::createLabel(tr("Choisissez le modèle à utiliser pour la simulation"), 20, true, false);
 
-    this->backButton = new QPushButton("Editer le modèle");
+    this->backButton = new QPushButton("Modifier ce modèle");
     this->backButton->setFixedHeight(150);
     this->backButton->setFont(UIUtils::getFont(15,true,false,QFont::Capitalization::AllUppercase));
     this->backButton->setStyleSheet("background-color : crimson; color: white;");
-    this->nextButton = new QPushButton("Lancer la simulation \nsur ce modèle");
+    this->nextButton = new QPushButton("Lancer la simulation\nsur ce modèle");
     this->nextButton->setFixedHeight(150);
     this->nextButton->setFont(UIUtils::getFont(15,true,false,QFont::Capitalization::AllUppercase));
     this->nextButton->setStyleSheet("background-color : crimson; color: white;");
@@ -28,11 +28,11 @@ LoadModelFormView::LoadModelFormView(QWidget *parent, UIEngine *_uiEngine) : QWi
     this->modelCombo->setModel(modelComboModel);
 
     this->gridLayout = new QGridLayout();
-    this->gridLayout->addWidget(this->instructionMessageLabel,0,0,1,2);
-    this->gridLayout->addWidget(this->modelComboLabel, 1,0,1,1);
-    this->gridLayout->addWidget(this->modelCombo, 1,1,1,1);
-    this->gridLayout->addWidget(this->backButton, 2,0,1,1);
-    this->gridLayout->addWidget(this->nextButton,2,1,1,1);
+    this->gridLayout->addWidget(this->instructionMessageLabel, 0, 0, 1, 2);
+    this->gridLayout->addWidget(this->modelComboLabel, 1, 0, 1, 1);
+    this->gridLayout->addWidget(this->modelCombo, 1, 1, 1, 1);
+    this->gridLayout->addWidget(this->backButton, 2, 0, 1, 1);
+    this->gridLayout->addWidget(this->nextButton, 2, 1, 1, 1);
     this->setLayout(this->gridLayout);
 
     connect(this->backButton, &QPushButton::clicked, this->uiEngine, &UIEngine::changeToMainMenuView);

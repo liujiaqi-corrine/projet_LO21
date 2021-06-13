@@ -42,6 +42,8 @@ map<int,int> Grid::countNbCellsPerState(){
             nbStates++;
         }
         nbCellsPerState.insert({stateIndex,nbStates});
+        cout<<nbStates<<endl;
     }
+
     return nbCellsPerState;
 }

@@ -20,8 +20,20 @@ class MainMenuView : public QWidget
         UIEngine *uiEngine;
         QLabel *welcomeMessageLabel;
         QPushButton *createModelButton;
-        QPushButton *loadModelButton;
+        QPushButton *editLibraryButton;
         QGridLayout *gridLayout;
+        QDialog* editLibraryMenu;
+        QDialog* addModelMenu;
+        QDialog* delModelMenu;
+        QDialog* addSurroundingMenu;
+        QDialog* delSurroundingMenu;
+
+    private slots:
+        void editLibrary();
+        void addModel();
+        void delModel();
+        void addSurrounding();
+        void delSurrounding();
 };
 
 #endif // MAINMENUVIEW_H

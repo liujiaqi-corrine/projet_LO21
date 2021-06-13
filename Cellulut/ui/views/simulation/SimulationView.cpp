@@ -2,6 +2,7 @@
 
 SimulationView::SimulationView(QWidget *parent, UIEngine *_uiEngine) : QWidget(parent), uiEngine(_uiEngine)
 {
+    Automate::getAutomate()->getHistoric()->clear();
     modelForSimulation = Automate::getAutomate()->getModel();
     Grid::getGrid()->removeAllCells();
     Automate::getAutomate()->init_Grid(MIN_GRID_SIZE);
@@ -37,8 +38,8 @@ SimulationView::SimulationView(QWidget *parent, UIEngine *_uiEngine) : QWidget(p
     setStyleSheet(tr(this->styleSheet));
 
     // Random configuration button
-    this->randomConfigurationButton = new QPushButton("Initialisation aléatoire");
-    this->randomConfigurationButton->setFont(UIUtils::getFont(12,false,false));
+    this->randomInitializationButton = new QPushButton("Initialisation aléatoire");
+    this->randomInitializationButton->setFont(UIUtils::getFont(12,false,false));
 
     // Automatic simulation
     this->simulationThread = new SimulationThread(this);
@@ -71,7 +72,7 @@ SimulationView::~SimulationView(){
     delete board;
     delete inputSize;
     delete sliderSize;
-    delete randomConfigurationButton;
+    delete randomInitializationButton;
 
     qInfo() << "SimulationView::SimulationView - destructor";
 }
@@ -81,7 +82,8 @@ void SimulationView::initEvents(){
     connect(inputSize, &QLineEdit::textEdited, this , &SimulationView::updateInputSizeValueFromString );
     connect(board, &SimulationBoard::initialConfigurationChanged, statesDisplay, &StatesDisplay::refreshCounters);
     connect(simulationButtonsBar, &SimulationButtonsBar::stepForward, this, &SimulationView::generateNextStep);
-    connect(randomConfigurationButton, &QPushButton::clicked, this, &SimulationView::onClickRandomConfiguration);
+    connect(simulationButtonsBar, &SimulationButtonsBar::stepBackward, this, &SimulationView::generateBackStep);
+    connect(randomInitializationButton, &QPushButton::clicked, this, &SimulationView::onClickRandomInitialization);
     connect(simulationButtonsBar, &SimulationButtonsBar::start, this, &SimulationView::onClickStart);
     connect(simulationButtonsBar, &SimulationButtonsBar::stop, this, &SimulationView::onClickStop);
     connect(simulationThread, &SimulationThread::nextStepCalculated, this, &SimulationView::generateNextStep);
@@ -91,10 +93,12 @@ void SimulationView::initEvents(){
 }
 
 void SimulationView::updateInputSizeValueFromInt(int newValue){
+    Automate::getAutomate()->getHistoric()->clear();
     this->changeGridSize(newValue);
 }
 
 void SimulationView::updateInputSizeValueFromString(QString newValueAsStr){
+    Automate::getAutomate()->getHistoric()->clear();
     if(newValueAsStr == ""){
         return;
     }
@@ -114,14 +118,14 @@ void SimulationView::changeGridSize(int newValue){
 }
 
 void SimulationView::setupGridLayout(){
-    this->gridLayout->addWidget(UIUtils::createLabel("Configurer la simulation \n en cliquant sur la grille", 15, true, false), 0, 2,1,4);
+    this->gridLayout->addWidget(UIUtils::createLabel("Configurer la simulation\nen cliquant sur la grille", 15, true, false), 0, 2,1,4);
     this->gridLayout->addWidget(this->modelTitle, 1, 0,1,2);
     this->gridLayout->addWidget(this->modelDescription, 2, 0,1,2);
     this->gridLayout->addWidget(this->modelAuthor, 3, 0);
     this->gridLayout->addWidget(this->modelDate, 3, 1);
     this->gridLayout->addWidget(this->sizeDisplay, 5, 0, 1,2);
     this->gridLayout->addWidget(this->sliderSize, 6, 0, 1,2);
-    this->gridLayout->addWidget(this->randomConfigurationButton, 7, 0, 1, 2);
+    this->gridLayout->addWidget(this->randomInitializationButton, 7, 0, 1, 2);
     this->gridLayout->addWidget(this->board, 1, 2, 7, 4);
     this->gridLayout->addWidget(createLabel("Etats :", "states", 12, false, false), 1, 6,1,2);
     this->gridLayout->addWidget(this->statesDisplay, 2,6,6,2);
@@ -152,40 +156,62 @@ QLabel *SimulationView::createLabel(const QString &text, const QString &objectNa
 }
 
 void SimulationView::generateNextStep(){
+    if (!Automate::getAutomate()->getHistoric()->size())
+        Automate::getAutomate()->save_current_config();
     Automate::getAutomate()->next_generation();
+    if(Automate::getAutomate()->check_stability())
+        qInfo() << "Stable configuration";
     this->board->refreshGrid();
 }
 
-void SimulationView::onClickRandomConfiguration(){
+void SimulationView::generateBackStep(){
+    if(!Automate::getAutomate()->back_generation())
+        qInfo() << "No backtracking possible";
+    this->board->refreshGrid();
+}
+
+void SimulationView::onClickRandomInitialization(){
     Automate::getAutomate()->random_init();
     this->board->refreshGrid();
 }
 
 void SimulationView::onClickStart(){
-    qInfo() << "SimulationView::onClickStart";
-    this->increaseSimulationSpeed->setDisabled(false);
-    this->decreaseSimulationSpeed->setDisabled(true);
+    this->simulationThread->Stop = false;
+    if (this->speedFactor == 1)
+        this->decreaseSimulationSpeed->setDisabled(true);
+    else
+        this->decreaseSimulationSpeed->setDisabled(false);
+    if (this->speedFactor == MAX_SIMULATION_SPEED)
+        this->increaseSimulationSpeed->setDisabled(true);
+    else
+        this->increaseSimulationSpeed->setDisabled(false);
     this->simulationButtonsBar->setStartButtonDisabled(true);
     this->simulationButtonsBar->setStopButtonDisabled(false);
+    this->simulationButtonsBar->setStepBackwardButtonDisabled(true);
     this->simulationButtonsBar->setStepForwardButtonDisabled(true);
-    this->decreaseSimulationSpeed->setDisabled(false);
     this->inputSize->setDisabled(true);
     this->sliderSize->setDisabled(true);
-    this->randomConfigurationButton->setDisabled(true);
+    this->randomInitializationButton->setDisabled(true);
     this->simulationThread->start();
 }
 
 void SimulationView::onClickStop(){
-    qInfo() << "SimulationView::onClickStop";
     this->simulationThread->Stop = true;
-    this->increaseSimulationSpeed->setDisabled(true);
-    this->decreaseSimulationSpeed->setDisabled(true);
+    if (this->speedFactor == 1)
+        this->decreaseSimulationSpeed->setDisabled(true);
+    else
+        this->decreaseSimulationSpeed->setDisabled(false);
+    if (this->speedFactor == MAX_SIMULATION_SPEED)
+        this->increaseSimulationSpeed->setDisabled(true);
+    else
+        this->increaseSimulationSpeed->setDisabled(false);
     this->simulationButtonsBar->setStartButtonDisabled(false);
     this->simulationButtonsBar->setStopButtonDisabled(true);
+    this->simulationButtonsBar->setStepBackwardButtonDisabled(false);
     this->simulationButtonsBar->setStepForwardButtonDisabled(false);
     this->inputSize->setDisabled(false);
     this->sliderSize->setDisabled(false);
-    this->randomConfigurationButton->setDisabled(false);
+    this->randomInitializationButton->setDisabled(false);
 }
 
 void SimulationView::onClickIncreaseSpeed(){

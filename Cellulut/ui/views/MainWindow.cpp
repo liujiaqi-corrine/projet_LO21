@@ -4,8 +4,8 @@ MainWindow::MainWindow(QWidget *parent, UIEngine *_uiEngine) :
     QMainWindow(parent),
     uiEngine(_uiEngine)
 {
-    this->setFixedWidth(WINDOW_WIDTH);
-    this->setFixedHeight(WINDOW_HEIGHT);
+    this->setFixedSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+
     mainMenuAct = new QAction(tr("&Menu principal"), this);
     mainMenuAct->setStatusTip(tr("Aller au menu principal"));
 

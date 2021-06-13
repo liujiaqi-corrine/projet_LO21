@@ -3,8 +3,8 @@
         <file alias="play.svg">ui/icons/solid/play.svg</file>
         <file alias="pause.svg">ui/icons/solid/pause.svg</file>
         <file alias="step-forward.svg">ui/icons/solid/step-forward.svg</file>
+	<file alias="step-backward.svg">ui/icons/solid/step-backward.svg</file>
         <file alias="forward.svg">ui/icons/solid/forward.svg</file>
-        <file alias="stop.svg">ui/icons/solid/stop.svg</file>
         <file alias="backward.svg">ui/icons/solid/backward.svg</file>
     </qresource>
 </RCC>

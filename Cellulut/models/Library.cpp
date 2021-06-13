@@ -13,6 +13,19 @@ void Library::create_Surrounding(string _name)
     Surrounding* new_surrounding = new Surrounding(this->listSurroundings->size(), _name);
     this->listSurroundings->push_back(new_surrounding);
     cout<<"Create Surrounding '"<<new_surrounding->getName()<<"' with index "<<new_surrounding->getId_Surrounding()<<endl;
+
+    /*for(unsigned int i = 0; i < listSurroundings->size(); i++)
+    {
+        if(listSurroundings->at(i)->getId_Surrounding() == new_surrounding->getId_Surrounding())
+        {
+            //throw invalid_argument("Surrounding index already exists, index : " + to_string(new_surrounding->getId_Surrounding()));
+            cout<<"Surrounding index already exists"<<endl;
+            return;
+        }
+    }
+    this->listSurroundings->push_back(new_surrounding);
+    cout<<"Surrounding added"<<endl;
+    return;*/
 }
 
 Surrounding* Library::get_Surrounding(unsigned int surrounding_id)

@@ -35,7 +35,13 @@ class Automate // Singleton
 
         unsigned int check_rule_ext(unsigned int x, unsigned int y, unsigned int rule_ext_index);
 
+        unsigned int check_stability();
+
+        void afficher_historique(int x);
+
         void next_generation();
+
+        unsigned int back_generation();
 };
 
 #endif // AUTOMATE_H

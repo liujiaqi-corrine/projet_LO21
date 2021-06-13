@@ -4,9 +4,8 @@
 #include "main.h"
 #include "ui/UIEngine.h"
 
-namespace Ui
-{
-    class MainWindow;
+namespace Ui {
+class MainWindow;
 }
 
 class UIEngine;
@@ -17,6 +16,7 @@ class MainWindow : public QMainWindow
     public:
         explicit MainWindow(QWidget *parent = nullptr, UIEngine *uiEngine = 0);
         ~MainWindow();
+
     private:
         UIEngine* uiEngine;
         QAction *mainMenuAct;
